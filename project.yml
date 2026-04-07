@@ -38,19 +38,25 @@ targets:
         NSSupportsLiveActivities: true
     dependencies:
       - target: RoundTimerWidgetExtension
-      - target: RoundTimerWatch
 
   RoundTimerWidgetExtension:
     type: app-extension
     platform: iOS
     sources:
       - path: RoundTimerWidgetExtension
+      - path: RoundTimer/Models/TimerPhase.swift
+      - path: RoundTimer/Models/SoundEvent.swift
+      - path: RoundTimer/LiveActivity/TimerActivityAttributes.swift
+    info:
+      path: RoundTimerWidgetExtension/Info.plist
+      properties:
+        CFBundleDisplayName: "RoundTimer Widget"
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
     settings:
       base:
-        GENERATE_INFOPLIST_FILE: true
+        GENERATE_INFOPLIST_FILE: false
         PRODUCT_BUNDLE_IDENTIFIER: com.roundtimer.app.widget
-        INFOPLIST_KEY_CFBundleDisplayName: "RoundTimer Widget"
-        INFOPLIST_KEY_NSExtension_NSExtensionPointIdentifier: "com.apple.widgetkit-extension"
     entitlements:
       path: RoundTimerWidgetExtension/RoundTimerWidgetExtension.entitlements
       properties: {}

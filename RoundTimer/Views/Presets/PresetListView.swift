@@ -20,6 +20,13 @@ struct PresetListView: View {
                             store.markUsed(preset)
                             configureEngineCallbacks()
                             engine.start(preset: preset)
+                            TimerActivityManager.shared.start(
+                                presetName: preset.name,
+                                totalRounds: preset.rounds,
+                                phase: engine.currentPhase,
+                                intervalEndDate: engine.phaseEndDate,
+                                currentRound: engine.currentRound
+                            )
                             showingTimer = true
                         }
                         .contextMenu {
@@ -67,6 +74,7 @@ struct PresetListView: View {
             .fullScreenCover(isPresented: $showingTimer) {
                 ActiveTimerView(engine: engine) {
                     engine.stop()
+                    TimerActivityManager.shared.end()
                     showingTimer = false
                 }
             }
@@ -74,10 +82,17 @@ struct PresetListView: View {
     }
 
     private func configureEngineCallbacks() {
-        engine.onPhaseChange = { phase in
+        engine.onPhaseChange = { [engine] phase in
             AudioManager.shared.resetCountdown()
             AudioManager.shared.play(phase.soundEvent)
             HapticManager.shared.phaseTransition(phase)
+            TimerActivityManager.shared.update(
+                phase: phase,
+                currentRound: engine.currentRound,
+                intervalEndDate: engine.phaseEndDate,
+                intervalName: engine.intervalName,
+                isPaused: false
+            )
         }
         engine.onCountdownTick = { seconds in
             AudioManager.shared.playCountdownIfNeeded(secondsLeft: seconds)
@@ -86,6 +101,7 @@ struct PresetListView: View {
         engine.onComplete = {
             AudioManager.shared.play(.timerComplete)
             HapticManager.shared.timerComplete()
+            TimerActivityManager.shared.end()
         }
     }
 }

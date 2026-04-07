@@ -40,9 +40,9 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] Screen stays awake during active timer (UIApplication.shared.isIdleTimerDisabled)
 - [x] 3-2-1 countdown beeps with deduplicated firing (once per second, not per tick)
 - [x] Final 10 seconds visual indicator (pulse or color change on countdown text)
-- [ ] Live Activity — start/update/end lifecycle wired to TimerEngine
-- [ ] Live Activity — lock screen shows phase + countdown + round
-- [ ] Live Activity — Dynamic Island compact and expanded views
+- [x] Live Activity — start/update/end lifecycle wired to TimerEngine
+- [x] Live Activity — lock screen shows phase + countdown + round
+- [x] Live Activity — Dynamic Island compact and expanded views
 - [ ] Last-used preset highlighted/sorted on app launch
 - [ ] Built-in presets cannot be deleted (UI enforcement)
 - [ ] Proper sound files for phase transitions (bundled .caf/.wav or system sounds that actually play)
@@ -164,3 +164,10 @@ Each automated run appends a brief entry here.
 - Files changed: RoundTimer/Views/ActiveTimer/ActiveTimerView.swift
 - Tested: Started Tabata, skipped to REST (10s) → countdown text turned red immediately (entire REST phase is ≤10s). Scale pulse animates on each second change via phaseAnimator.
 - Visual QA: pass — red text clearly visible at 0:04 on blue REST background
+
+### Run 15 — 2026-04-07 19:30
+- Task: Phase 2 — Live Activity lifecycle + lock screen + Dynamic Island
+- Result: COMPLETED — all 3 Live Activity items done in one run (they're tightly coupled)
+- Files changed: RoundTimer/LiveActivity/TimerActivityManager.swift (NEW), RoundTimer/LiveActivity/TimerActivityAttributes.swift (NEW — shared between app and widget), RoundTimer/Models/TimerPhase.swift (added colorHex), RoundTimer/Views/Presets/PresetListView.swift (wired start/update/end), RoundTimerWidgetExtension/RoundTimerWidgetBundle.swift (removed duplicate attributes), project.yml (shared TimerActivityAttributes with widget)
+- Lock screen + Dynamic Island UI was already implemented in RoundTimerWidgetBundle.swift from Run 1
+- Visual QA: pass — app launches, timer runs without crash, Live Activity lifecycle wired to engine callbacks
