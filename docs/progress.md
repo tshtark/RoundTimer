@@ -79,6 +79,7 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] Next phase preview on active timer ("Next: REST 0:10", "Next: Round 2 — WORK", "Final interval!")
 - [x] QA: Full dark mode verification (home, settings, history, active timer, completion — all pass)
 - [x] Preset color accent strip (left border strip on each preset row matching primary phase color)
+- [x] Total remaining workout time display (hourglass icon with countdown at bottom of active timer)
 
 ---
 
@@ -376,3 +377,10 @@ Each automated run appends a brief entry here.
 - Files changed: RoundTimer/Views/Presets/PresetListView.swift (added primaryColor computed property + RoundedRectangle accent strip to PresetRow body)
 - Tested: All 5 presets show green accent strip (all start with WORK phase). Strips are 4pt wide, 56pt tall with rounded corners.
 - Visual QA: pass — accent strips add professional visual structure to the preset list
+
+### Run 40 — 2026-04-07 22:51
+- Task: Phase 4 — Total remaining workout time display
+- Result: COMPLETED — hourglass countdown + elapsed stopwatch at bottom of active timer
+- Files changed: RoundTimer/Engine/TimerEngine.swift (added totalRemainingTime computed property), RoundTimer/Views/ActiveTimer/ActiveTimerView.swift (redesigned bottom info bar with elapsed/remaining on top line, preset info on second line)
+- Tested: Started Tabata → bottom shows "0:06 elapsed, -3:53 remaining" (correct: 4:00 total - 0:06 = 3:54). Preset info on second line.
+- Visual QA: pass — dual time display informative, hourglass icon intuitive

@@ -62,6 +62,28 @@ class TimerEngine {
         return 1.0 - (timeRemaining / currentPhaseDuration)
     }
 
+    var totalRemainingTime: TimeInterval {
+        guard let preset = preset, isRunning, !isFinished else { return 0 }
+        var remaining = timeRemaining
+
+        // Add remaining intervals in current round
+        let intervalDuration = preset.intervals.reduce(0.0) { $0 + $1.duration }
+        for i in (currentIntervalIndex + 1)..<preset.intervals.count {
+            remaining += preset.intervals[i].duration
+        }
+
+        // Add remaining full rounds
+        let remainingRounds = totalRounds - currentRound
+        remaining += Double(remainingRounds) * intervalDuration
+
+        // Add cooldown if applicable
+        if currentPhase != .cooldown, let cooldown = preset.cooldown, cooldown > 0 {
+            remaining += cooldown
+        }
+
+        return remaining
+    }
+
     // MARK: - Elapsed Time
     var workoutStartDate: Date?
     var finalElapsedTime: TimeInterval = 0

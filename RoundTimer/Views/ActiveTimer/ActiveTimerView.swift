@@ -154,17 +154,29 @@ struct ActiveTimerView: View {
                     Text("Your workout progress will be lost.")
                 }
 
-                // Elapsed time + preset info
-                HStack {
-                    Image(systemName: "clock")
-                        .font(.caption2)
-                    Text(formatElapsed(engine.elapsedTime))
-                        .monospacedDigit()
-                    Text("·")
+                // Elapsed + remaining time + preset info
+                VStack(spacing: 4) {
+                    HStack(spacing: 16) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "stopwatch")
+                                .font(.caption2)
+                            Text(formatElapsed(engine.elapsedTime))
+                                .monospacedDigit()
+                        }
+                        HStack(spacing: 4) {
+                            Image(systemName: "hourglass")
+                                .font(.caption2)
+                            Text("-\(formatElapsed(engine.totalRemainingTime))")
+                                .monospacedDigit()
+                        }
+                    }
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+
                     Text("\(engine.presetName) — Interval \(engine.currentIntervalIndex + 1)/\(engine.totalIntervals)")
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
                 }
-                .font(.caption)
-                .foregroundStyle(.secondary)
                 .padding(.bottom, 8)
             }
         }
