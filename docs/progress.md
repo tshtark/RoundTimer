@@ -73,6 +73,7 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] Workout History — tracks completed workouts with date, duration, rounds; persisted via JSON
 - [x] Weekly activity summary on home screen (workouts count, total time, day streak)
 - [x] Circular progress ring on active timer (replaces linear bar, premium visual upgrade)
+- [x] Radial gradient background on active timer (phase-colored glow from center, adaptive light/dark)
 
 ---
 
@@ -313,3 +314,10 @@ Each automated run appends a brief entry here.
 - Files changed: RoundTimer/Views/ActiveTimer/ActiveTimerView.swift (replaced GeometryReader+Capsule progress bar with ZStack Circle ring, 260x260 frame, 12pt stroke with round linecap)
 - Tested: Started AMRAP → circular ring visible with green fill progressing clockwise from top. Countdown text centered inside ring. Ring animates smoothly. Stopped → returned to preset list.
 - Visual QA: pass — premium circular progress ring looks professional, smooth animation, clean layout
+
+### Run 34 — 2026-04-07 22:21
+- Task: Phase 4 — Radial gradient background on active timer
+- Result: COMPLETED — replaced flat color background with radial gradient
+- Files changed: RoundTimer/Views/ActiveTimer/ActiveTimerView.swift (replaced .color.opacity(0.3) with RadialGradient from center, 3-stop gradient using phase color + systemBackground)
+- Tested: Started AMRAP in light mode → green gradient glows from center outward. Switched to dark mode → stunning dark green glow against black background. Both modes look premium.
+- Visual QA: pass — radial gradient adapts to light/dark mode, smooth phase transition animation

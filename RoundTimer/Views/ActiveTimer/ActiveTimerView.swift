@@ -7,10 +7,18 @@ struct ActiveTimerView: View {
 
     var body: some View {
         ZStack {
-            engine.currentPhase.color
-                .opacity(0.3)
-                .ignoresSafeArea()
-                .animation(.easeInOut(duration: 0.5), value: engine.currentPhase)
+            RadialGradient(
+                colors: [
+                    engine.currentPhase.color.opacity(0.4),
+                    engine.currentPhase.color.opacity(0.15),
+                    Color(.systemBackground).opacity(0.9)
+                ],
+                center: .center,
+                startRadius: 50,
+                endRadius: 500
+            )
+            .ignoresSafeArea()
+            .animation(.easeInOut(duration: 0.5), value: engine.currentPhase)
 
             VStack(spacing: 20) {
                 Spacer()
