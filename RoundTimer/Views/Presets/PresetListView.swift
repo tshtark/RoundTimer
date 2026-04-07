@@ -9,6 +9,7 @@ struct PresetListView: View {
     @State private var editingPreset: TimerPreset?
     @State private var duplicatingPreset: TimerPreset?
     @State private var showingSettings = false
+    @State private var showingQuickTimer = false
 
     var body: some View {
         NavigationStack {
@@ -54,6 +55,31 @@ struct PresetListView: View {
                     }
                 }
 
+                Section {
+                    Button {
+                        showingQuickTimer = true
+                    } label: {
+                        HStack(spacing: 12) {
+                            Image(systemName: "bolt.circle.fill")
+                                .font(.system(size: 32))
+                                .foregroundStyle(.orange)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Quick Start")
+                                    .font(.system(.title3, design: .rounded, weight: .semibold))
+                                    .foregroundStyle(.primary)
+                                Text("Set work, rest & rounds — start instantly")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.caption)
+                                .foregroundStyle(.tertiary)
+                        }
+                        .padding(.vertical, 4)
+                    }
+                }
+
                 if !store.presets.contains(where: { !$0.isBuiltIn }) {
                     Section {
                         VStack(spacing: 8) {
@@ -91,6 +117,20 @@ struct PresetListView: View {
             }
             .sheet(isPresented: $showingSettings) {
                 SettingsView(settings: SettingsManager.shared)
+            }
+            .sheet(isPresented: $showingQuickTimer) {
+                QuickTimerView { preset in
+                    configureEngineCallbacks()
+                    engine.start(preset: preset)
+                    TimerActivityManager.shared.start(
+                        presetName: preset.name,
+                        totalRounds: preset.rounds,
+                        phase: engine.currentPhase,
+                        intervalEndDate: engine.phaseEndDate,
+                        currentRound: engine.currentRound
+                    )
+                    showingTimer = true
+                }
             }
             .sheet(isPresented: $showingBuilder) {
                 PresetBuilderView(store: store)

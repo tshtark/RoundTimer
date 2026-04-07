@@ -69,6 +69,7 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] Workout completion summary (duration, rounds, intervals stats on finish screen)
 - [x] Half-time alert (visual badge + sound + haptic at 50% of intervals >= 10s)
 - [x] Grammar fix: "1 round" instead of "1 rounds" on preset list
+- [x] Quick Start — one-tap timer with work/rest/rounds pickers, no preset saved
 
 ---
 
@@ -281,3 +282,10 @@ Each automated run appends a brief entry here.
 - Files changed: RoundTimer/Engine/TimerEngine.swift (halfTimeFired flag, onHalfTime callback, fires at 50%), RoundTimer/Models/SoundEvent.swift (added .halfTime), RoundTimer/Engine/AudioManager.swift (halfTime sound ID 1113), RoundTimer/Views/Presets/PresetListView.swift (wired onHalfTime, grammar fix), RoundTimer/Views/ActiveTimer/ActiveTimerView.swift (HALFWAY badge with auto-dismiss after 2s)
 - Tested: Started Tabata (20s work), timer ran through phases correctly. Grammar fix verified — AMRAP shows "1 round". Stop → confirmation → back to preset list.
 - Visual QA: pass — timer runs, phases transition, HALFWAY badge transient (2s display), grammar correct
+
+### Run 30 — 2026-04-07 22:05
+- Task: Phase 4 — Quick Start timer (one-off timer without saving a preset)
+- Result: COMPLETED — Quick Start sheet with work/rest pickers, rounds stepper, total duration, and Start button
+- Files changed: RoundTimer/Views/QuickTimer/QuickTimerView.swift (NEW — Form with DurationPickers, Stepper, Start button), RoundTimer/Views/Presets/PresetListView.swift (added Quick Start section with bolt icon + sheet)
+- Tested: Scrolled to Quick Start → tapped → sheet opened with defaults (30s work, 15s rest, 3 rounds, 2m 15s total) → tapped Start Timer → timer launched (WORK 0:24, Round 1/3, "Quick Timer") → stopped → returned to preset list. No preset saved.
+- Visual QA: pass — Quick Start section visible, sheet UI polished, timer launches correctly from temporary preset
