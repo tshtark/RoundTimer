@@ -30,7 +30,10 @@ struct ActiveTimerView: View {
                 // Big countdown
                 Text(formatTime(engine.timeRemaining))
                     .font(.system(size: 96, weight: .bold, design: .monospaced))
+                    .minimumScaleFactor(0.5)
+                    .lineLimit(1)
                     .foregroundStyle(engine.timeRemaining <= 10 && engine.timeRemaining > 0 ? .red : .primary)
+                    .accessibilityLabel("\(Int(ceil(engine.timeRemaining))) seconds remaining")
                     .contentTransition(.numericText())
                     .animation(.linear(duration: 0.1), value: Int(engine.timeRemaining))
                     .phaseAnimator([false, true], trigger: Int(ceil(engine.timeRemaining))) { content, phase in
@@ -70,6 +73,7 @@ struct ActiveTimerView: View {
                             .font(.system(size: 60))
                             .foregroundStyle(.primary)
                     }
+                    .accessibilityLabel(engine.isPaused ? "Resume" : "Pause")
 
                     // Skip
                     Button {
@@ -79,6 +83,7 @@ struct ActiveTimerView: View {
                             .font(.system(size: 60))
                             .foregroundStyle(.primary)
                     }
+                    .accessibilityLabel("Skip to next interval")
 
                     // Stop
                     Button {
@@ -88,6 +93,7 @@ struct ActiveTimerView: View {
                             .font(.system(size: 60))
                             .foregroundStyle(.red)
                     }
+                    .accessibilityLabel("Stop timer")
                 }
                 .padding(.bottom, 20)
                 .alert("Stop Timer?", isPresented: $showStopConfirmation) {
