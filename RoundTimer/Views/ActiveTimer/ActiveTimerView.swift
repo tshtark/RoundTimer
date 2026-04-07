@@ -4,6 +4,8 @@ struct ActiveTimerView: View {
     @Bindable var engine: TimerEngine
     var onStop: () -> Void
     @State private var showStopConfirmation = false
+    @State private var celebrationScale: CGFloat = 0.3
+    @State private var celebrationOpacity: Double = 0
 
     var body: some View {
         ZStack {
@@ -162,6 +164,15 @@ struct ActiveTimerView: View {
                 finishedOverlay
             }
         }
+        .onChange(of: engine.isFinished) { _, finished in
+            if finished {
+                celebrationScale = 0.3
+                celebrationOpacity = 0
+            } else {
+                celebrationScale = 0.3
+                celebrationOpacity = 0
+            }
+        }
         .onAppear {
             UIApplication.shared.isIdleTimerDisabled = SettingsManager.shared.keepScreenAwake
         }
@@ -184,14 +195,25 @@ struct ActiveTimerView: View {
                 Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 80))
                     .foregroundStyle(.green)
+                    .scaleEffect(celebrationScale)
+                    .opacity(celebrationOpacity)
 
                 Text("WORKOUT COMPLETE!")
                     .font(.system(size: 28, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
+                    .opacity(celebrationOpacity)
 
                 Text(engine.presetName)
                     .font(.title3)
                     .foregroundStyle(.white.opacity(0.7))
+                    .opacity(celebrationOpacity)
+
+                Text(motivationalMessage)
+                    .font(.subheadline)
+                    .foregroundStyle(.green.opacity(0.8))
+                    .italic()
+                    .opacity(celebrationOpacity)
+                    .padding(.top, -8)
 
                 // Stats grid
                 HStack(spacing: 24) {
@@ -212,6 +234,7 @@ struct ActiveTimerView: View {
                     )
                 }
                 .padding(.vertical, 8)
+                .opacity(celebrationOpacity)
 
                 Spacer()
 
@@ -227,8 +250,29 @@ struct ActiveTimerView: View {
                 .clipShape(Capsule())
                 .padding(.horizontal, 40)
                 .padding(.bottom, 40)
+                .opacity(celebrationOpacity)
             }
         }
+        .onAppear {
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.6)) {
+                celebrationScale = 1.0
+                celebrationOpacity = 1.0
+            }
+        }
+    }
+
+    private var motivationalMessage: String {
+        let messages = [
+            "Great work! You crushed it!",
+            "Another one in the books!",
+            "Strong finish!",
+            "Way to push through!",
+            "That's how it's done!",
+            "Beast mode activated!",
+            "Consistency builds champions!",
+            "One step closer to your goals!"
+        ]
+        return messages[abs(engine.presetName.hashValue) % messages.count]
     }
 
     private func statCard(icon: String, value: String, label: String) -> some View {

@@ -74,6 +74,7 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] Weekly activity summary on home screen (workouts count, total time, day streak)
 - [x] Circular progress ring on active timer (replaces linear bar, premium visual upgrade)
 - [x] Radial gradient background on active timer (phase-colored glow from center, adaptive light/dark)
+- [x] Animated completion celebration (spring bounce checkmark, motivational messages, fade-in stats)
 
 ---
 
@@ -321,3 +322,10 @@ Each automated run appends a brief entry here.
 - Files changed: RoundTimer/Views/ActiveTimer/ActiveTimerView.swift (replaced .color.opacity(0.3) with RadialGradient from center, 3-stop gradient using phase color + systemBackground)
 - Tested: Started AMRAP in light mode → green gradient glows from center outward. Switched to dark mode → stunning dark green glow against black background. Both modes look premium.
 - Visual QA: pass — radial gradient adapts to light/dark mode, smooth phase transition animation
+
+### Run 35 — 2026-04-07 22:26
+- Task: Phase 4 — Animated completion celebration
+- Result: COMPLETED — spring bounce checkmark, motivational messages, fade-in UI
+- Files changed: RoundTimer/Views/ActiveTimer/ActiveTimerView.swift (added celebrationScale/celebrationOpacity states, spring animation on overlay appear, motivationalMessage computed property with 8 messages, onChange reset)
+- Tested: Completed AMRAP → checkmark bounced in with spring animation, "Strong finish!" motivational message displayed in green italic, stats and Done button faded in. Tapped Done → returned to preset list (3 Workouts in weekly summary).
+- Visual QA: pass — celebration animation smooth, motivational message adds premium feel
