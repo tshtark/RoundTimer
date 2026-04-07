@@ -1,5 +1,6 @@
 import Foundation
 
+@MainActor
 @Observable
 class WorkoutHistoryStore {
     private(set) var records: [WorkoutRecord] = []

@@ -85,6 +85,7 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] Haptic feedback on timer control buttons (pause/resume, skip, stop — sensoryFeedback API)
 - [x] Share preset via system share sheet (text summary with intervals, rounds, duration)
 - [x] Share completed workout from finish screen (duration, rounds, intervals share text)
+- [x] QA: Comprehensive code audit of ActiveTimerView + PresetListView (45-run accumulated changes)
 
 ---
 
@@ -423,3 +424,14 @@ Each automated run appends a brief entry here.
 - Files changed: RoundTimer/Views/ActiveTimer/ActiveTimerView.swift (added ShareLink button above Done, workoutShareText computed property with preset name, duration, rounds, intervals)
 - Tested: Completed AMRAP → finish screen shows "Share Workout" (green outline) above "Done" (solid green). Share text includes "AMRAP 10min — Done! 0:07 · 1 round · 1 intervals. Tracked with RoundTimer".
 - Visual QA: pass — both buttons clean, proper spacing, share button uses system ShareLink
+
+### Run 46 — 2026-04-07 23:25
+- Task: QA — Comprehensive code audit of ActiveTimerView + PresetListView
+- Result: 3 ISSUES FIXED from audit findings
+- Files changed: RoundTimer/Views/ActiveTimer/ActiveTimerView.swift (fix onChange celebration — only reset on !finished, not both branches; add totalRounds > 0 guard for RoundDotsView), RoundTimer/Persistence/WorkoutHistoryStore.swift (add @MainActor for Swift 6 concurrency)
+- Fixes applied:
+  1. Celebration animation: removed duplicate reset branch (both branches were identical — only reset on !finished now)
+  2. RoundDotsView: added totalRounds > 0 guard to prevent 1...0 range crash
+  3. WorkoutHistoryStore: added @MainActor annotation for Swift 6 concurrency compliance
+- Noted for future: AudioServicesPlaySystemSound bypasses AVAudioSession (pre-existing), RoundTimerApp init @MainActor (pre-existing)
+- Visual QA: pass — app builds and runs correctly after fixes

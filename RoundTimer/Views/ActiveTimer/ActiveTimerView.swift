@@ -89,7 +89,7 @@ struct ActiveTimerView: View {
                     .fontWeight(.medium)
 
                 // Round dots
-                if engine.totalRounds <= 20 {
+                if engine.totalRounds > 0 && engine.totalRounds <= 20 {
                     RoundDotsView(
                         current: engine.currentRound,
                         total: engine.totalRounds,
@@ -212,10 +212,7 @@ struct ActiveTimerView: View {
             }
         }
         .onChange(of: engine.isFinished) { _, finished in
-            if finished {
-                celebrationScale = 0.3
-                celebrationOpacity = 0
-            } else {
+            if !finished {
                 celebrationScale = 0.3
                 celebrationOpacity = 0
             }
