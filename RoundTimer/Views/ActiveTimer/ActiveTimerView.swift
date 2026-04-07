@@ -123,6 +123,7 @@ struct ActiveTimerView: View {
                             .foregroundStyle(.primary)
                     }
                     .accessibilityLabel(engine.isPaused ? "Resume" : "Pause")
+                    .sensoryFeedback(.impact(flexibility: .soft), trigger: engine.isPaused)
 
                     // Skip
                     Button {
@@ -133,6 +134,7 @@ struct ActiveTimerView: View {
                             .foregroundStyle(.primary)
                     }
                     .accessibilityLabel("Skip to next interval")
+                    .sensoryFeedback(.impact(flexibility: .rigid), trigger: engine.currentIntervalIndex)
 
                     // Stop
                     Button {
@@ -143,6 +145,7 @@ struct ActiveTimerView: View {
                             .foregroundStyle(.red)
                     }
                     .accessibilityLabel("Stop timer")
+                    .sensoryFeedback(.warning, trigger: showStopConfirmation)
                 }
                 .padding(.bottom, 20)
                 .alert("Stop Timer?", isPresented: $showStopConfirmation) {

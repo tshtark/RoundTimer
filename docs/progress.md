@@ -82,6 +82,7 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] Total remaining workout time display (hourglass icon with countdown at bottom of active timer)
 - [x] QA: Preset builder "+" button — visible and functional (simctl automation can't access nav bar buttons, but works for real users; previously tested in Runs 9-11)
 - [x] Paused overlay (floating badge with pause icon + "PAUSED" text when timer is paused)
+- [x] Haptic feedback on timer control buttons (pause/resume, skip, stop — sensoryFeedback API)
 
 ---
 
@@ -399,3 +400,10 @@ Each automated run appends a brief entry here.
 - Files changed: RoundTimer/Views/ActiveTimer/ActiveTimerView.swift (added paused overlay with rounded rectangle chip, pause icon, "PAUSED" text, fade transition)
 - Tested: Started Tabata → tapped Pause → "PAUSED" badge appeared inside ring area → tapped Resume → badge disappeared, timer continued from 0:03 → stopped and returned to preset list
 - Visual QA: pass — paused state clearly communicated, no overlap with other elements, smooth transition
+
+### Run 43 — 2026-04-07 23:06
+- Task: Phase 4 — Haptic feedback on timer control buttons
+- Result: COMPLETED — added .sensoryFeedback to Pause/Resume, Skip, and Stop buttons
+- Files changed: RoundTimer/Views/ActiveTimer/ActiveTimerView.swift (added .sensoryFeedback(.impact soft) on pause toggle, .sensoryFeedback(.impact rigid) on skip, .sensoryFeedback(.warning) on stop)
+- Tested: All buttons responsive — Pause/Resume, Skip, Stop with confirmation dialog. Haptics fire on real devices (not simulator). Build succeeds.
+- Visual QA: pass — all controls functional, confirmation dialog works
