@@ -175,7 +175,7 @@ struct ActiveTimerView: View {
                 HStack(spacing: 24) {
                     statCard(
                         icon: "clock.fill",
-                        value: formatElapsed(engine.elapsedTime),
+                        value: formatElapsed(engine.finalElapsedTime),
                         label: "Duration"
                     )
                     statCard(
@@ -185,7 +185,7 @@ struct ActiveTimerView: View {
                     )
                     statCard(
                         icon: "bolt.fill",
-                        value: "\(engine.totalIntervals)",
+                        value: "\(engine.totalRounds * engine.totalIntervals)",
                         label: "Intervals"
                     )
                 }

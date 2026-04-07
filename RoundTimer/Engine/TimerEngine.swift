@@ -28,9 +28,10 @@ class TimerEngine {
 
     // MARK: - Elapsed Time
     var workoutStartDate: Date?
+    var finalElapsedTime: TimeInterval = 0
 
     var elapsedTime: TimeInterval {
-        guard let start = workoutStartDate else { return 0 }
+        guard let start = workoutStartDate else { return finalElapsedTime }
         return Date().timeIntervalSince(start)
     }
 
@@ -152,6 +153,7 @@ class TimerEngine {
 
     private func finish() {
         stopTick()
+        finalElapsedTime = elapsedTime
         isRunning = false
         isFinished = true
         onComplete?()
