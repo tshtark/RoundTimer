@@ -66,6 +66,7 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] Interval progress bar on ActiveTimerView (thin bar showing progress through current interval)
 - [x] Elapsed workout time display on ActiveTimerView (total time since workout started)
 - [x] Settings screen (sound, haptics, screen awake, countdown beeps toggles + about section)
+- [x] Workout completion summary (duration, rounds, intervals stats on finish screen)
 
 ---
 
@@ -264,3 +265,10 @@ Each automated run appends a brief entry here.
 - Files changed: RoundTimer/Engine/SettingsManager.swift (NEW — @Observable @MainActor singleton with 4 toggles), RoundTimer/Views/Settings/SettingsView.swift (NEW — Form with 3 sections), RoundTimer/Engine/AudioManager.swift (added sound + countdown guards), RoundTimer/Engine/HapticManager.swift (added haptics guards), RoundTimer/Views/ActiveTimer/ActiveTimerView.swift (keepScreenAwake from settings), RoundTimer/Views/Presets/PresetListView.swift (gear icon + settings sheet)
 - Tested: Opened settings via gear icon → all 4 toggles default ON → toggled Sound Effects OFF (switch turned grey) → toggled back ON → tapped Done → returned to preset list
 - Visual QA: pass — settings screen renders correctly, toggles functional, dismissal works
+
+### Run 28 — 2026-04-07 21:48
+- Task: Phase 4 — Workout completion summary with stats
+- Result: COMPLETED — enhanced finish overlay with duration/rounds/intervals stat cards
+- Files changed: RoundTimer/Views/ActiveTimer/ActiveTimerView.swift (replaced simple COMPLETE overlay with full summary: checkmark, preset name, 3 stat cards with icons, full-width Done button, solid dark background)
+- Tested: Started AMRAP (1 round), skipped to completion → "WORKOUT COMPLETE!" with "AMRAP 10min", Duration 0:09, Rounds 1, Intervals 1. Tapped Done → returned to preset list. Also tested EMOM (10 rounds) → Duration 0:55, Rounds 10, Intervals 1.
+- Visual QA: pass — completion overlay clean with no background bleed-through, stats display correctly

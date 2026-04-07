@@ -153,17 +153,45 @@ struct ActiveTimerView: View {
 
     private var finishedOverlay: some View {
         ZStack {
-            Color.black.opacity(0.7)
+            Color(red: 0.08, green: 0.09, blue: 0.08)
                 .ignoresSafeArea()
 
-            VStack(spacing: 20) {
+            VStack(spacing: 24) {
+                Spacer()
+
                 Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 80))
                     .foregroundStyle(.green)
 
-                Text("COMPLETE!")
-                    .font(.system(size: 36, weight: .bold, design: .rounded))
+                Text("WORKOUT COMPLETE!")
+                    .font(.system(size: 28, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
+
+                Text(engine.presetName)
+                    .font(.title3)
+                    .foregroundStyle(.white.opacity(0.7))
+
+                // Stats grid
+                HStack(spacing: 24) {
+                    statCard(
+                        icon: "clock.fill",
+                        value: formatElapsed(engine.elapsedTime),
+                        label: "Duration"
+                    )
+                    statCard(
+                        icon: "repeat",
+                        value: "\(engine.totalRounds)",
+                        label: "Rounds"
+                    )
+                    statCard(
+                        icon: "bolt.fill",
+                        value: "\(engine.totalIntervals)",
+                        label: "Intervals"
+                    )
+                }
+                .padding(.vertical, 8)
+
+                Spacer()
 
                 Button("Done") {
                     onStop()
@@ -171,12 +199,32 @@ struct ActiveTimerView: View {
                 .font(.title2)
                 .fontWeight(.semibold)
                 .foregroundStyle(.white)
-                .padding(.horizontal, 40)
-                .padding(.vertical, 12)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 16)
                 .background(.green)
                 .clipShape(Capsule())
+                .padding(.horizontal, 40)
+                .padding(.bottom, 40)
             }
         }
+    }
+
+    private func statCard(icon: String, value: String, label: String) -> some View {
+        VStack(spacing: 8) {
+            Image(systemName: icon)
+                .font(.title2)
+                .foregroundStyle(.green)
+            Text(value)
+                .font(.system(size: 24, weight: .bold, design: .rounded))
+                .foregroundStyle(.white)
+            Text(label)
+                .font(.caption)
+                .foregroundStyle(.white.opacity(0.6))
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 16)
+        .background(.white.opacity(0.1))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
     private func formatTime(_ time: TimeInterval) -> String {
