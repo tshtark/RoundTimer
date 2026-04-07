@@ -152,11 +152,19 @@ struct RoundDotsView: View {
     let color: Color
 
     var body: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: 8) {
             ForEach(1...total, id: \.self) { round in
                 Circle()
-                    .fill(round <= current ? color : color.opacity(0.2))
-                    .frame(width: 12, height: 12)
+                    .fill(round <= current ? color : color.opacity(0.15))
+                    .frame(width: 16, height: 16)
+                    .overlay {
+                        if round <= current {
+                            Circle()
+                                .stroke(color.opacity(0.3), lineWidth: 1)
+                        }
+                    }
+                    .scaleEffect(round == current ? 1.15 : 1.0)
+                    .animation(.easeInOut(duration: 0.3), value: current)
             }
         }
     }

@@ -51,9 +51,9 @@ This file is read and updated by the automated development loop. Each run picks 
 
 - [x] Better color palette (not raw .green/.blue — use richer, gym-appropriate colors)
 - [x] Dark mode support and testing
-- [ ] Smooth animations on phase transitions (background color crossfade)
-- [ ] Countdown text pulse animation in final 10 seconds
-- [ ] Larger, bolder round dots with better spacing
+- [x] Smooth animations on phase transitions (background color crossfade)
+- [x] Countdown text pulse animation in final 10 seconds
+- [x] Larger, bolder round dots with better spacing
 - [ ] Better typography hierarchy on PresetListView
 - [ ] Empty state if no user presets yet (encouraging message)
 - [ ] Confirmation dialog before stopping an active timer
@@ -203,3 +203,10 @@ Each automated run appends a brief entry here.
 - Result: ALREADY WORKING — no code changes needed
 - Tested: Switched simulator to dark mode → preset list shows dark background with white text, colored badges, green play buttons all adapt correctly. Active timer shows deep green background, white text, red countdown. All elements use .primary/.secondary colors that auto-adapt.
 - Visual QA: pass — both light and dark mode look great
+
+### Run 20 — 2026-04-07 19:53
+- Task: Phase 3 — Smooth animations + countdown pulse + larger round dots
+- Result: COMPLETED — crossfade animation and countdown pulse already existed; implemented larger round dots
+- Files changed: RoundTimer/Views/ActiveTimer/ActiveTimerView.swift (RoundDotsView: 16px dots, 8px spacing, stroke overlay, current-round scale animation)
+- Marked crossfade animation and countdown pulse as done (already implemented in earlier runs)
+- Visual QA: pass — round dots are larger, bolder, current round has subtle scale emphasis
