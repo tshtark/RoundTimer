@@ -13,6 +13,22 @@ struct ActiveTimerView: View {
                 .animation(.easeInOut(duration: 0.5), value: engine.currentPhase)
 
             VStack(spacing: 24) {
+                // Interval progress bar
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        Capsule()
+                            .fill(engine.currentPhase.color.opacity(0.2))
+                            .frame(height: 6)
+                        Capsule()
+                            .fill(engine.currentPhase.color)
+                            .frame(width: geo.size.width * engine.progress, height: 6)
+                            .animation(.linear(duration: 0.1), value: engine.progress)
+                    }
+                }
+                .frame(height: 6)
+                .padding(.horizontal, 24)
+                .padding(.top, 8)
+
                 Spacer()
 
                 // Phase name

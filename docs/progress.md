@@ -63,7 +63,7 @@ This file is read and updated by the automated development loop. Each run picks 
 
 ## Phase 4: New Features (Beyond V1 PRD — Low Priority)
 
-- [ ] (ideas will be added by the loop as inspiration strikes)
+- [x] Interval progress bar on ActiveTimerView (thin bar showing progress through current interval)
 
 ---
 
@@ -241,3 +241,10 @@ Each automated run appends a brief entry here.
 - Visual QA: pass — timer screen renders correctly with all accessibility additions
 
 **Phase 3 COMPLETE — all UI/UX improvements implemented.**
+
+### Run 25 — 2026-04-07 20:18
+- Task: Phase 4 — Interval progress bar on ActiveTimerView
+- Result: COMPLETED — thin capsule progress bar at top of timer screen
+- Files changed: RoundTimer/Views/ActiveTimer/ActiveTimerView.swift (added GeometryReader + Capsule progress bar using engine.progress)
+- Uses phase color for the fill, animates smoothly with .linear(duration: 0.1)
+- Visual QA: pass — green progress bar visible at ~80% fill with 4s remaining on 20s WORK interval
