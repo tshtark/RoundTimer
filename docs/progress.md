@@ -70,6 +70,7 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] Half-time alert (visual badge + sound + haptic at 50% of intervals >= 10s)
 - [x] Grammar fix: "1 round" instead of "1 rounds" on preset list
 - [x] Quick Start — one-tap timer with work/rest/rounds pickers, no preset saved
+- [x] Workout History — tracks completed workouts with date, duration, rounds; persisted via JSON
 
 ---
 
@@ -289,3 +290,10 @@ Each automated run appends a brief entry here.
 - Files changed: RoundTimer/Views/QuickTimer/QuickTimerView.swift (NEW — Form with DurationPickers, Stepper, Start button), RoundTimer/Views/Presets/PresetListView.swift (added Quick Start section with bolt icon + sheet)
 - Tested: Scrolled to Quick Start → tapped → sheet opened with defaults (30s work, 15s rest, 3 rounds, 2m 15s total) → tapped Start Timer → timer launched (WORK 0:24, Round 1/3, "Quick Timer") → stopped → returned to preset list. No preset saved.
 - Visual QA: pass — Quick Start section visible, sheet UI polished, timer launches correctly from temporary preset
+
+### Run 31 — 2026-04-07 22:12
+- Task: Phase 4 — Workout History (track completed workouts)
+- Result: COMPLETED — full workout history with persistence, empty state, and clear all
+- Files changed: RoundTimer/Models/WorkoutRecord.swift (NEW), RoundTimer/Persistence/WorkoutHistoryStore.swift (NEW), RoundTimer/Views/History/HistoryView.swift (NEW), RoundTimer/Views/Presets/PresetListView.swift (added historyStore, toolbar icon, sheet, onComplete recording)
+- Tested: Opened History (empty state "No Workouts Yet") → completed AMRAP (skipped to finish) → opened History → record appeared: "AMRAP 10min", Today, 10:11 PM, 6s, 1 round. Clear button visible in toolbar.
+- Visual QA: pass — history icon in toolbar, empty state clean, workout records display correctly with date/time/duration

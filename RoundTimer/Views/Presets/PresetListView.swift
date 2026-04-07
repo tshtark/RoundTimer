@@ -10,6 +10,8 @@ struct PresetListView: View {
     @State private var duplicatingPreset: TimerPreset?
     @State private var showingSettings = false
     @State private var showingQuickTimer = false
+    @State private var showingHistory = false
+    @State private var historyStore = WorkoutHistoryStore()
 
     var body: some View {
         NavigationStack {
@@ -101,10 +103,17 @@ struct PresetListView: View {
             .navigationTitle("RoundTimer")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        showingSettings = true
-                    } label: {
-                        Image(systemName: "gearshape")
+                    HStack(spacing: 16) {
+                        Button {
+                            showingSettings = true
+                        } label: {
+                            Image(systemName: "gearshape")
+                        }
+                        Button {
+                            showingHistory = true
+                        } label: {
+                            Image(systemName: "clock.arrow.circlepath")
+                        }
                     }
                 }
                 ToolbarItem(placement: .primaryAction) {
@@ -117,6 +126,9 @@ struct PresetListView: View {
             }
             .sheet(isPresented: $showingSettings) {
                 SettingsView(settings: SettingsManager.shared)
+            }
+            .sheet(isPresented: $showingHistory) {
+                HistoryView(store: historyStore)
             }
             .sheet(isPresented: $showingQuickTimer) {
                 QuickTimerView { preset in
@@ -180,10 +192,17 @@ struct PresetListView: View {
             AudioManager.shared.play(.halfTime)
             HapticManager.shared.countdownTick()
         }
-        engine.onComplete = {
+        engine.onComplete = { [engine, historyStore] in
             AudioManager.shared.play(.timerComplete)
             HapticManager.shared.timerComplete()
             TimerActivityManager.shared.end()
+            let record = WorkoutRecord(
+                presetName: engine.presetName,
+                totalDuration: engine.finalElapsedTime,
+                roundsCompleted: engine.currentRound,
+                intervalsCompleted: engine.totalRounds * engine.totalIntervals
+            )
+            historyStore.add(record)
         }
     }
 }
