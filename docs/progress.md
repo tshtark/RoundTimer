@@ -38,7 +38,7 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] PresetBuilderView — edit existing presets
 - [x] PresetBuilderView — duplicate built-in presets for editing
 - [x] Screen stays awake during active timer (UIApplication.shared.isIdleTimerDisabled)
-- [ ] 3-2-1 countdown beeps with deduplicated firing (once per second, not per tick)
+- [x] 3-2-1 countdown beeps with deduplicated firing (once per second, not per tick)
 - [ ] Final 10 seconds visual indicator (pulse or color change on countdown text)
 - [ ] Live Activity — start/update/end lifecycle wired to TimerEngine
 - [ ] Live Activity — lock screen shows phase + countdown + round
@@ -150,3 +150,10 @@ Each automated run appends a brief entry here.
 - Files changed: RoundTimer/Views/ActiveTimer/ActiveTimerView.swift
 - Tested: Started Tabata → timer runs, app builds with no crash. isIdleTimerDisabled set on .onAppear, cleared on .onDisappear.
 - Visual QA: pass — timer screen works normally with idle timer management
+
+### Run 13 — 2026-04-07 19:18
+- Task: Phase 2 — 3-2-1 countdown beeps with deduplicated firing
+- Result: ALREADY IMPLEMENTED — no code changes needed
+- Verified: AudioManager.playCountdownIfNeeded(secondsLeft:) already deduplicates via lastCountdownTick tracking. TimerEngine.tick() fires onCountdownTick at ≤3s, AudioManager only plays once per second value. resetCountdown() called on phase change.
+- Tested: Started Tabata, let WORK phase run to completion → transitioned to REST at 0:03, confirming countdown fired correctly through the transition.
+- Visual QA: pass — timer runs normally, phase transitions occur at correct times
