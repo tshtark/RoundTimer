@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct QuickTimerView: View {
-    var onStart: (TimerPreset) -> Void
+    var onStart: @MainActor (TimerPreset) -> Void
     @Environment(\.dismiss) private var dismiss
 
     @State private var workDuration: TimeInterval = 30
