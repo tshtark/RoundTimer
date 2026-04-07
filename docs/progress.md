@@ -77,6 +77,7 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] Animated completion celebration (spring bounce checkmark, motivational messages, fade-in stats)
 - [x] QA: Full Tabata end-to-end test (8 rounds, WORK/REST transitions, completion, history)
 - [x] Next phase preview on active timer ("Next: REST 0:10", "Next: Round 2 — WORK", "Final interval!")
+- [x] QA: Full dark mode verification (home, settings, history, active timer, completion — all pass)
 
 ---
 
@@ -355,3 +356,15 @@ Each automated run appends a brief entry here.
 - Files changed: RoundTimer/Engine/TimerEngine.swift (added nextPhaseDescription computed property, formatDuration helper), RoundTimer/Views/ActiveTimer/ActiveTimerView.swift (added next phase text below round dots)
 - Tested: Started Tabata → WORK phase shows "Next: REST 0:10" → skipped to REST → "Next: Round 2 — WORK" → skipped to Round 8/8 REST → "Final interval!" displayed. Completed naturally → celebration overlay correct.
 - Visual QA: pass — next phase text clear, updates on each transition, "Final interval!" motivational
+
+### Run 38 — 2026-04-07 22:42
+- Task: QA — Full dark mode verification across all screens
+- Result: PASSED — all screens render correctly in dark mode
+- Files changed: docs/progress.md only
+- QA checklist:
+  - Home screen (preset list + weekly summary): PASS — white text, dark background, colored elements
+  - Settings: PASS — form sections, toggles, about section all correct
+  - History: PASS — workout records readable, green duration text, Clear/Done buttons
+  - Active timer: PASS (verified in Run 34 — stunning radial gradient glow)
+  - Completion overlay: PASS (verified in Run 35 — dark overlay with green accents)
+- Visual QA: pass — dark mode is production-ready, no color contrast or readability issues
