@@ -50,7 +50,7 @@ This file is read and updated by the automated development loop. Each run picks 
 ## Phase 3: UI/UX Improvements
 
 - [x] Better color palette (not raw .green/.blue — use richer, gym-appropriate colors)
-- [ ] Dark mode support and testing
+- [x] Dark mode support and testing
 - [ ] Smooth animations on phase transitions (background color crossfade)
 - [ ] Countdown text pulse animation in final 10 seconds
 - [ ] Larger, bolder round dots with better spacing
@@ -197,3 +197,9 @@ Each automated run appends a brief entry here.
 - Files changed: RoundTimer/Models/TimerPhase.swift (updated color and colorHex properties)
 - Colors: Work=Emerald(#00C853), Rest=SteelBlue(#2979FF), Warmup=Amber(#FFB300), Cooldown=DeepOrange(#FF6D00)
 - Visual QA: pass — preset list badges and active timer backgrounds show richer, more saturated colors
+
+### Run 19 — 2026-04-07 19:47
+- Task: Phase 3 — Dark mode support and testing
+- Result: ALREADY WORKING — no code changes needed
+- Tested: Switched simulator to dark mode → preset list shows dark background with white text, colored badges, green play buttons all adapt correctly. Active timer shows deep green background, white text, red countdown. All elements use .primary/.secondary colors that auto-adapt.
+- Visual QA: pass — both light and dark mode look great
