@@ -1,0 +1,156 @@
+import SwiftUI
+
+struct ActiveTimerView: View {
+    @Bindable var engine: TimerEngine
+    var onStop: () -> Void
+
+    var body: some View {
+        ZStack {
+            engine.currentPhase.color
+                .opacity(0.3)
+                .ignoresSafeArea()
+                .animation(.easeInOut(duration: 0.5), value: engine.currentPhase)
+
+            VStack(spacing: 24) {
+                Spacer()
+
+                // Phase name
+                Text(engine.currentPhase.displayName)
+                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                    .foregroundStyle(engine.currentPhase.color)
+
+                // Interval name
+                if let name = engine.intervalName {
+                    Text(name)
+                        .font(.title3)
+                        .foregroundStyle(.secondary)
+                }
+
+                // Big countdown
+                Text(formatTime(engine.timeRemaining))
+                    .font(.system(size: 96, weight: .bold, design: .monospaced))
+                    .contentTransition(.numericText())
+                    .animation(.linear(duration: 0.1), value: Int(engine.timeRemaining))
+
+                // Round progress
+                Text("Round \(engine.currentRound) / \(engine.totalRounds)")
+                    .font(.title2)
+                    .fontWeight(.medium)
+
+                // Round dots
+                if engine.totalRounds <= 20 {
+                    RoundDotsView(
+                        current: engine.currentRound,
+                        total: engine.totalRounds,
+                        color: engine.currentPhase.color
+                    )
+                }
+
+                Spacer()
+
+                // Controls
+                HStack(spacing: 40) {
+                    // Pause / Resume
+                    Button {
+                        if engine.isPaused {
+                            engine.resume()
+                        } else {
+                            engine.pause()
+                        }
+                    } label: {
+                        Image(systemName: engine.isPaused ? "play.circle.fill" : "pause.circle.fill")
+                            .font(.system(size: 60))
+                            .foregroundStyle(.primary)
+                    }
+
+                    // Skip
+                    Button {
+                        engine.skip()
+                    } label: {
+                        Image(systemName: "forward.end.circle.fill")
+                            .font(.system(size: 60))
+                            .foregroundStyle(.primary)
+                    }
+
+                    // Stop
+                    Button {
+                        onStop()
+                    } label: {
+                        Image(systemName: "stop.circle.fill")
+                            .font(.system(size: 60))
+                            .foregroundStyle(.red)
+                    }
+                }
+                .padding(.bottom, 20)
+
+                // Preset name + interval position
+                Text("\(engine.presetName) — Interval \(engine.currentIntervalIndex + 1)/\(engine.totalIntervals)")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .padding(.bottom, 8)
+            }
+        }
+        .overlay {
+            if engine.isFinished {
+                finishedOverlay
+            }
+        }
+        .onAppear {
+            UIApplication.shared.isIdleTimerDisabled = true
+        }
+        .onDisappear {
+            UIApplication.shared.isIdleTimerDisabled = false
+        }
+    }
+
+    private var finishedOverlay: some View {
+        ZStack {
+            Color.black.opacity(0.7)
+                .ignoresSafeArea()
+
+            VStack(spacing: 20) {
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.system(size: 80))
+                    .foregroundStyle(.green)
+
+                Text("COMPLETE!")
+                    .font(.system(size: 36, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white)
+
+                Button("Done") {
+                    onStop()
+                }
+                .font(.title2)
+                .fontWeight(.semibold)
+                .foregroundStyle(.white)
+                .padding(.horizontal, 40)
+                .padding(.vertical, 12)
+                .background(.green)
+                .clipShape(Capsule())
+            }
+        }
+    }
+
+    private func formatTime(_ time: TimeInterval) -> String {
+        let total = max(0, Int(ceil(time)))
+        let minutes = total / 60
+        let seconds = total % 60
+        return String(format: "%d:%02d", minutes, seconds)
+    }
+}
+
+struct RoundDotsView: View {
+    let current: Int
+    let total: Int
+    let color: Color
+
+    var body: some View {
+        HStack(spacing: 6) {
+            ForEach(1...total, id: \.self) { round in
+                Circle()
+                    .fill(round <= current ? color : color.opacity(0.2))
+                    .frame(width: 12, height: 12)
+            }
+        }
+    }
+}

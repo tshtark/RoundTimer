@@ -37,7 +37,7 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] PresetBuilderView — create new custom presets (name, intervals, rounds, warmup, cooldown)
 - [x] PresetBuilderView — edit existing presets
 - [x] PresetBuilderView — duplicate built-in presets for editing
-- [ ] Screen stays awake during active timer (UIApplication.shared.isIdleTimerDisabled)
+- [x] Screen stays awake during active timer (UIApplication.shared.isIdleTimerDisabled)
 - [ ] 3-2-1 countdown beeps with deduplicated firing (once per second, not per tick)
 - [ ] Final 10 seconds visual indicator (pulse or color change on countdown text)
 - [ ] Live Activity — start/update/end lifecycle wired to TimerEngine
@@ -143,3 +143,10 @@ Each automated run appends a brief entry here.
 - Files changed: RoundTimer/Views/Presets/PresetBuilderView.swift (added init(duplicating:) with new IDs + "Copy" suffix), RoundTimer/Views/Presets/PresetListView.swift (added Duplicate to context menu for all presets + duplicatingPreset sheet)
 - Tested: Long-pressed Tabata (built-in) → context menu showed "Duplicate" (no Edit) → tapped Duplicate → builder opened with "New Preset" title, name "Tabata Copy", intervals/rounds pre-populated → saved → "Tabata Copy" appeared in list (8 rounds, 4m 0s, no star)
 - Visual QA: pass — duplicate creates independent copy, original untouched
+
+### Run 12 — 2026-04-07 19:13
+- Task: Phase 2 — Screen stays awake during active timer
+- Result: COMPLETED — added isIdleTimerDisabled on ActiveTimerView appear/disappear
+- Files changed: RoundTimer/Views/ActiveTimer/ActiveTimerView.swift
+- Tested: Started Tabata → timer runs, app builds with no crash. isIdleTimerDisabled set on .onAppear, cleared on .onDisappear.
+- Visual QA: pass — timer screen works normally with idle timer management
