@@ -54,7 +54,7 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] Smooth animations on phase transitions (background color crossfade)
 - [x] Countdown text pulse animation in final 10 seconds
 - [x] Larger, bolder round dots with better spacing
-- [ ] Better typography hierarchy on PresetListView
+- [x] Better typography hierarchy on PresetListView
 - [ ] Empty state if no user presets yet (encouraging message)
 - [ ] Confirmation dialog before stopping an active timer
 - [ ] Smooth fullScreenCover transition animation
@@ -210,3 +210,9 @@ Each automated run appends a brief entry here.
 - Files changed: RoundTimer/Views/ActiveTimer/ActiveTimerView.swift (RoundDotsView: 16px dots, 8px spacing, stroke overlay, current-round scale animation)
 - Marked crossfade animation and countdown pulse as done (already implemented in earlier runs)
 - Visual QA: pass — round dots are larger, bolder, current round has subtle scale emphasis
+
+### Run 21 — 2026-04-07 19:57
+- Task: Phase 3 — Better typography hierarchy on PresetListView
+- Result: COMPLETED — upgraded PresetRow typography
+- Files changed: RoundTimer/Views/Presets/PresetListView.swift (PresetRow: title3 rounded semibold for names, subheadline for metadata, larger play button at 36pt, better spacing)
+- Visual QA: pass — preset names are larger and bolder, metadata more readable, play button more prominent

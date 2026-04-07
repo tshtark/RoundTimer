@@ -121,19 +121,19 @@ struct PresetRow: View {
 
     var body: some View {
         HStack {
-            VStack(alignment: .leading, spacing: 4) {
-                HStack {
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(spacing: 6) {
                     Text(preset.name)
-                        .font(.headline)
+                        .font(.system(.title3, design: .rounded, weight: .semibold))
                     if preset.isBuiltIn {
                         Image(systemName: "star.fill")
-                            .font(.caption2)
+                            .font(.caption)
                             .foregroundStyle(.yellow)
                     }
                     if isLastUsed {
                         Text("Recent")
                             .font(.caption2)
-                            .fontWeight(.medium)
+                            .fontWeight(.semibold)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
                             .background(.purple.opacity(0.15))
@@ -146,17 +146,17 @@ struct PresetRow: View {
                     Label("\(preset.rounds) rounds", systemImage: "repeat")
                     Label(preset.formattedDuration, systemImage: "clock")
                 }
-                .font(.caption)
+                .font(.subheadline)
                 .foregroundStyle(.secondary)
 
-                HStack(spacing: 4) {
+                HStack(spacing: 5) {
                     ForEach(preset.intervals) { interval in
                         Text(interval.phase.displayName)
                             .font(.caption2)
-                            .fontWeight(.medium)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(interval.phase.color.opacity(0.2))
+                            .fontWeight(.semibold)
+                            .padding(.horizontal, 7)
+                            .padding(.vertical, 3)
+                            .background(interval.phase.color.opacity(0.15))
                             .foregroundStyle(interval.phase.color)
                             .clipShape(Capsule())
                     }
@@ -166,10 +166,10 @@ struct PresetRow: View {
             Spacer()
 
             Image(systemName: "play.circle.fill")
-                .font(.title)
-                .foregroundStyle(.green)
+                .font(.system(size: 36))
+                .foregroundStyle(TimerPhase.work.color)
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, 6)
     }
 }
 
