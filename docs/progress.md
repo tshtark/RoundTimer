@@ -83,6 +83,7 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] QA: Preset builder "+" button — visible and functional (simctl automation can't access nav bar buttons, but works for real users; previously tested in Runs 9-11)
 - [x] Paused overlay (floating badge with pause icon + "PAUSED" text when timer is paused)
 - [x] Haptic feedback on timer control buttons (pause/resume, skip, stop — sensoryFeedback API)
+- [x] Share preset via system share sheet (text summary with intervals, rounds, duration)
 
 ---
 
@@ -407,3 +408,10 @@ Each automated run appends a brief entry here.
 - Files changed: RoundTimer/Views/ActiveTimer/ActiveTimerView.swift (added .sensoryFeedback(.impact soft) on pause toggle, .sensoryFeedback(.impact rigid) on skip, .sensoryFeedback(.warning) on stop)
 - Tested: All buttons responsive — Pause/Resume, Skip, Stop with confirmation dialog. Haptics fire on real devices (not simulator). Build succeeds.
 - Visual QA: pass — all controls functional, confirmation dialog works
+
+### Run 44 — 2026-04-07 23:12
+- Task: Phase 4 — Share preset via system share sheet
+- Result: COMPLETED — ShareLink in context menu with text-based preset summary
+- Files changed: RoundTimer/Views/Presets/PresetListView.swift (added ShareLink to context menu, shareText helper function generating formatted preset description)
+- Tested: Long-pressed Tabata (built-in) → context menu shows Duplicate + Share (no Edit — correct). Tapped Share → system share sheet opened with "Tabata" preview showing Copy, Save to Files, Reminders, More options.
+- Visual QA: pass — share sheet opens correctly, preset text formatted with intervals and duration

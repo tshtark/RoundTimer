@@ -89,6 +89,9 @@ struct PresetListView: View {
                             } label: {
                                 Label("Duplicate", systemImage: "doc.on.doc")
                             }
+                            ShareLink(item: shareText(for: preset)) {
+                                Label("Share", systemImage: "square.and.arrow.up")
+                            }
                         }
                         .deleteDisabled(preset.isBuiltIn)
                 }
@@ -287,6 +290,30 @@ struct PresetListView: View {
             )
             historyStore.add(record)
         }
+    }
+
+    private func shareText(for preset: TimerPreset) -> String {
+        var lines: [String] = []
+        lines.append("\(preset.name)")
+        lines.append("\(preset.rounds) \(preset.rounds == 1 ? "round" : "rounds") · \(preset.formattedDuration)")
+        lines.append("")
+        for (i, interval) in preset.intervals.enumerated() {
+            let duration = Int(interval.duration)
+            let m = duration / 60
+            let s = duration % 60
+            let timeStr = m > 0 ? "\(m):\(String(format: "%02d", s))" : "0:\(String(format: "%02d", s))"
+            let name = interval.name.map { " — \($0)" } ?? ""
+            lines.append("\(i + 1). \(interval.phase.displayName) \(timeStr)\(name)")
+        }
+        if let warmup = preset.warmup, warmup > 0 {
+            lines.append("Warmup: \(Int(warmup))s")
+        }
+        if let cooldown = preset.cooldown, cooldown > 0 {
+            lines.append("Cooldown: \(Int(cooldown))s")
+        }
+        lines.append("")
+        lines.append("Shared from RoundTimer")
+        return lines.joined(separator: "\n")
     }
 }
 
