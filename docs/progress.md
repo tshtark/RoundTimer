@@ -78,6 +78,7 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] QA: Full Tabata end-to-end test (8 rounds, WORK/REST transitions, completion, history)
 - [x] Next phase preview on active timer ("Next: REST 0:10", "Next: Round 2 — WORK", "Final interval!")
 - [x] QA: Full dark mode verification (home, settings, history, active timer, completion — all pass)
+- [x] Preset color accent strip (left border strip on each preset row matching primary phase color)
 
 ---
 
@@ -368,3 +369,10 @@ Each automated run appends a brief entry here.
   - Active timer: PASS (verified in Run 34 — stunning radial gradient glow)
   - Completion overlay: PASS (verified in Run 35 — dark overlay with green accents)
 - Visual QA: pass — dark mode is production-ready, no color contrast or readability issues
+
+### Run 39 — 2026-04-07 22:46
+- Task: Phase 4 — Preset color accent strip on preset list rows
+- Result: COMPLETED — 4pt colored left border strip on each PresetRow
+- Files changed: RoundTimer/Views/Presets/PresetListView.swift (added primaryColor computed property + RoundedRectangle accent strip to PresetRow body)
+- Tested: All 5 presets show green accent strip (all start with WORK phase). Strips are 4pt wide, 56pt tall with rounded corners.
+- Visual QA: pass — accent strips add professional visual structure to the preset list

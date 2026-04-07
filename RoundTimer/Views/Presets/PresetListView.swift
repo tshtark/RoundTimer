@@ -294,8 +294,17 @@ struct PresetRow: View {
     let preset: TimerPreset
     var isLastUsed: Bool = false
 
+    private var primaryColor: Color {
+        preset.intervals.first?.phase.color ?? TimerPhase.work.color
+    }
+
     var body: some View {
-        HStack {
+        HStack(spacing: 12) {
+            // Color accent strip
+            RoundedRectangle(cornerRadius: 2)
+                .fill(primaryColor)
+                .frame(width: 4, height: 56)
+
             VStack(alignment: .leading, spacing: 6) {
                 HStack(spacing: 6) {
                     Text(preset.name)
