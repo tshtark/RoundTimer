@@ -5,6 +5,7 @@ struct PresetListView: View {
     @State private var engine = TimerEngine()
     @State private var showingTimer = false
     @State private var selectedPreset: TimerPreset?
+    @State private var showingBuilder = false
 
     var body: some View {
         NavigationStack {
@@ -29,6 +30,18 @@ struct PresetListView: View {
                 }
             }
             .navigationTitle("RoundTimer")
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        showingBuilder = true
+                    } label: {
+                        Image(systemName: "plus")
+                    }
+                }
+            }
+            .sheet(isPresented: $showingBuilder) {
+                PresetBuilderView(store: store)
+            }
             .fullScreenCover(isPresented: $showingTimer) {
                 ActiveTimerView(engine: engine) {
                     engine.stop()

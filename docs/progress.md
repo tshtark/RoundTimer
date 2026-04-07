@@ -34,7 +34,7 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] HapticManager (phase transitions)
 - [x] PresetListView (home screen with preset details)
 - [x] ActiveTimerView (countdown, phase colors, round dots, controls)
-- [ ] PresetBuilderView — create new custom presets (name, intervals, rounds, warmup, cooldown)
+- [x] PresetBuilderView — create new custom presets (name, intervals, rounds, warmup, cooldown)
 - [ ] PresetBuilderView — edit existing presets
 - [ ] PresetBuilderView — duplicate built-in presets for editing
 - [ ] Screen stays awake during active timer (UIApplication.shared.isIdleTimerDisabled)
@@ -122,3 +122,10 @@ Each automated run appends a brief entry here.
 - Visual QA: pass — wall-clock based countdown survives background/foreground cycle
 
 **Phase 1 QA COMPLETE — all items verified.**
+
+### Run 9 — 2026-04-07 18:30
+- Task: Phase 2 — PresetBuilderView — create new custom presets
+- Result: COMPLETED — implemented full preset builder with Form UI
+- Files changed: RoundTimer/Views/Presets/PresetBuilderView.swift (NEW), RoundTimer/Views/Components/DurationPicker.swift (NEW), RoundTimer/Views/Presets/PresetListView.swift (modified — added "+" toolbar button + sheet)
+- Features: name field, work/rest intervals with phase picker + duration wheels, add/remove/reorder intervals, rounds stepper (1-99), optional warmup/cooldown with toggles + duration pickers, Save/Cancel
+- Visual QA: pass — tapped "+", entered "Quick HIIT", saved → preset appeared in list with correct details (3 rounds, 2m 15s, WORK/REST badges)
