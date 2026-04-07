@@ -18,7 +18,7 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] Round counter increments correctly
 - [x] Stop button returns to preset list
 - [x] Pause freezes countdown, Resume continues from where it stopped
-- [ ] Skip advances to next phase immediately
+- [x] Skip advances to next phase immediately
 - [ ] Timer completes all rounds and shows "COMPLETE" overlay
 - [ ] Timer with warmup phase works correctly
 - [ ] Timer with cooldown phase works correctly
@@ -81,3 +81,9 @@ Each automated run appends a brief entry here.
 - Result: PASSED — no code changes needed
 - Tested: Started Tabata, paused at 0:13, waited 3 seconds (stayed at 0:13), resumed (continued counting down to 0:05), stopped and returned to preset list
 - Visual QA: pass — app launched, pause/resume worked correctly, stop returned to home
+
+### Run 3 — 2026-04-07 17:57
+- Task: QA — Skip advances to next phase immediately
+- Result: PASSED — no code changes needed
+- Tested: Started Tabata (WORK R1 I1/2), skipped → REST R1 I2/2 (correct), skipped → WORK R2 I1/2 (correct round increment + interval reset)
+- Visual QA: pass — skip button works in both directions, round counter and interval label update correctly
