@@ -97,6 +97,15 @@ struct ActiveTimerView: View {
                     )
                 }
 
+                // Next phase preview
+                if let nextInfo = engine.nextPhaseDescription {
+                    Text(nextInfo)
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .foregroundStyle(.secondary)
+                        .padding(.top, 4)
+                }
+
                 Spacer()
 
                 // Controls

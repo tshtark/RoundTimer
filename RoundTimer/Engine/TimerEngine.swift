@@ -21,6 +21,42 @@ class TimerEngine {
         Date().addingTimeInterval(timeRemaining)
     }
 
+    var nextPhaseDescription: String? {
+        guard let preset = preset, isRunning, !isFinished else { return nil }
+        switch currentPhase {
+        case .warmup:
+            if let first = preset.intervals.first {
+                return "Next: \(first.phase.displayName) \(formatDuration(first.duration))"
+            }
+        case .work, .rest:
+            let nextIndex = currentIntervalIndex + 1
+            if nextIndex < preset.intervals.count {
+                let next = preset.intervals[nextIndex]
+                return "Next: \(next.phase.displayName) \(formatDuration(next.duration))"
+            } else if currentRound < totalRounds {
+                let first = preset.intervals[0]
+                return "Next: Round \(currentRound + 1) — \(first.phase.displayName)"
+            } else if let cooldown = preset.cooldown, cooldown > 0 {
+                return "Next: Cooldown \(formatDuration(cooldown))"
+            } else {
+                return "Final interval!"
+            }
+        case .cooldown:
+            return "Almost done!"
+        }
+        return nil
+    }
+
+    private func formatDuration(_ duration: TimeInterval) -> String {
+        let total = Int(duration)
+        let minutes = total / 60
+        let seconds = total % 60
+        if minutes > 0 {
+            return "\(minutes):\(String(format: "%02d", seconds))"
+        }
+        return "0:\(String(format: "%02d", seconds))"
+    }
+
     var progress: Double {
         guard currentPhaseDuration > 0 else { return 0 }
         return 1.0 - (timeRemaining / currentPhaseDuration)

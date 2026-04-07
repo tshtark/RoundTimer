@@ -76,6 +76,7 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] Radial gradient background on active timer (phase-colored glow from center, adaptive light/dark)
 - [x] Animated completion celebration (spring bounce checkmark, motivational messages, fade-in stats)
 - [x] QA: Full Tabata end-to-end test (8 rounds, WORK/REST transitions, completion, history)
+- [x] Next phase preview on active timer ("Next: REST 0:10", "Next: Round 2 — WORK", "Final interval!")
 
 ---
 
@@ -347,3 +348,10 @@ Each automated run appends a brief entry here.
   - Preset reorder: PASS (Tabata moved to top with Recent badge)
   - Navigation: PASS (Done → preset list)
 - Visual QA: pass — production-ready quality, no bugs or visual glitches
+
+### Run 37 — 2026-04-07 22:38
+- Task: Phase 4 — Next phase preview on active timer
+- Result: COMPLETED — shows upcoming phase below round dots
+- Files changed: RoundTimer/Engine/TimerEngine.swift (added nextPhaseDescription computed property, formatDuration helper), RoundTimer/Views/ActiveTimer/ActiveTimerView.swift (added next phase text below round dots)
+- Tested: Started Tabata → WORK phase shows "Next: REST 0:10" → skipped to REST → "Next: Round 2 — WORK" → skipped to Round 8/8 REST → "Final interval!" displayed. Completed naturally → celebration overlay correct.
+- Visual QA: pass — next phase text clear, updates on each transition, "Final interval!" motivational
