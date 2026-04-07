@@ -14,7 +14,9 @@ final class PresetBuilderViewModel {
     var cooldownDuration: TimeInterval
 
     var isValid: Bool {
-        !name.trimmingCharacters(in: .whitespaces).isEmpty && !intervals.isEmpty
+        !name.trimmingCharacters(in: .whitespaces).isEmpty
+            && !intervals.isEmpty
+            && intervals.allSatisfy { $0.duration > 0 }
     }
 
     init() {
