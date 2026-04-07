@@ -35,7 +35,7 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] PresetListView (home screen with preset details)
 - [x] ActiveTimerView (countdown, phase colors, round dots, controls)
 - [x] PresetBuilderView — create new custom presets (name, intervals, rounds, warmup, cooldown)
-- [ ] PresetBuilderView — edit existing presets
+- [x] PresetBuilderView — edit existing presets
 - [ ] PresetBuilderView — duplicate built-in presets for editing
 - [ ] Screen stays awake during active timer (UIApplication.shared.isIdleTimerDisabled)
 - [ ] 3-2-1 countdown beeps with deduplicated firing (once per second, not per tick)
@@ -129,3 +129,10 @@ Each automated run appends a brief entry here.
 - Files changed: RoundTimer/Views/Presets/PresetBuilderView.swift (NEW), RoundTimer/Views/Components/DurationPicker.swift (NEW), RoundTimer/Views/Presets/PresetListView.swift (modified — added "+" toolbar button + sheet)
 - Features: name field, work/rest intervals with phase picker + duration wheels, add/remove/reorder intervals, rounds stepper (1-99), optional warmup/cooldown with toggles + duration pickers, Save/Cancel
 - Visual QA: pass — tapped "+", entered "Quick HIIT", saved → preset appeared in list with correct details (3 rounds, 2m 15s, WORK/REST badges)
+
+### Run 10 — 2026-04-07 19:03
+- Task: Phase 2 — PresetBuilderView — edit existing presets
+- Result: COMPLETED — added edit mode to builder + context menu on user presets
+- Files changed: RoundTimer/Views/Presets/PresetBuilderView.swift (modified — added init(editing:), editingId, update logic), RoundTimer/Views/Presets/PresetListView.swift (modified — added context menu with Edit + editingPreset sheet)
+- Tested: Long-pressed "Quick HIIT" → context menu with "Edit" appeared → tapped Edit → builder opened with "Edit Preset" title, pre-populated name/intervals/rounds → changed rounds from 3→5 → saved → list showed updated "5 rounds, 3m 45s"
+- Visual QA: pass — edit flow works end-to-end, preset updated in-place

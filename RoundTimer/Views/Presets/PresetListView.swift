@@ -6,6 +6,7 @@ struct PresetListView: View {
     @State private var showingTimer = false
     @State private var selectedPreset: TimerPreset?
     @State private var showingBuilder = false
+    @State private var editingPreset: TimerPreset?
 
     var body: some View {
         NavigationStack {
@@ -19,6 +20,15 @@ struct PresetListView: View {
                             configureEngineCallbacks()
                             engine.start(preset: preset)
                             showingTimer = true
+                        }
+                        .contextMenu {
+                            if !preset.isBuiltIn {
+                                Button {
+                                    editingPreset = preset
+                                } label: {
+                                    Label("Edit", systemImage: "pencil")
+                                }
+                            }
                         }
                         .deleteDisabled(preset.isBuiltIn)
                 }
@@ -41,6 +51,9 @@ struct PresetListView: View {
             }
             .sheet(isPresented: $showingBuilder) {
                 PresetBuilderView(store: store)
+            }
+            .sheet(item: $editingPreset) { preset in
+                PresetBuilderView(store: store, editing: preset)
             }
             .fullScreenCover(isPresented: $showingTimer) {
                 ActiveTimerView(engine: engine) {

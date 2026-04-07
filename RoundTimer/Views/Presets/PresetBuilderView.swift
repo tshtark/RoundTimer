@@ -13,6 +13,10 @@ final class PresetBuilderViewModel {
     var hasCooldown: Bool
     var cooldownDuration: TimeInterval
 
+    private let editingId: UUID?
+
+    var isEditing: Bool { editingId != nil }
+
     var isValid: Bool {
         !name.trimmingCharacters(in: .whitespaces).isEmpty
             && !intervals.isEmpty
@@ -20,6 +24,7 @@ final class PresetBuilderViewModel {
     }
 
     init() {
+        editingId = nil
         name = ""
         intervals = [
             TimerInterval(phase: .work, duration: 30),
@@ -30,6 +35,17 @@ final class PresetBuilderViewModel {
         warmupDuration = 10
         hasCooldown = false
         cooldownDuration = 10
+    }
+
+    init(editing preset: TimerPreset) {
+        editingId = preset.id
+        name = preset.name
+        intervals = preset.intervals
+        rounds = preset.rounds
+        hasWarmup = preset.warmup != nil
+        warmupDuration = preset.warmup ?? 10
+        hasCooldown = preset.cooldown != nil
+        cooldownDuration = preset.cooldown ?? 10
     }
 
     func addInterval(phase: TimerPhase) {
@@ -47,13 +63,18 @@ final class PresetBuilderViewModel {
 
     func save(to store: PresetStore) {
         let preset = TimerPreset(
+            id: editingId ?? UUID(),
             name: name.trimmingCharacters(in: .whitespaces),
             intervals: intervals,
             rounds: rounds,
             warmup: hasWarmup ? warmupDuration : nil,
             cooldown: hasCooldown ? cooldownDuration : nil
         )
-        store.add(preset)
+        if isEditing {
+            store.update(preset)
+        } else {
+            store.add(preset)
+        }
     }
 }
 
@@ -61,8 +82,15 @@ final class PresetBuilderViewModel {
 
 struct PresetBuilderView: View {
     let store: PresetStore
+    let editing: TimerPreset?
     @Environment(\.dismiss) private var dismiss
-    @State private var viewModel = PresetBuilderViewModel()
+    @State private var viewModel: PresetBuilderViewModel
+
+    init(store: PresetStore, editing: TimerPreset? = nil) {
+        self.store = store
+        self.editing = editing
+        self._viewModel = State(initialValue: editing.map { PresetBuilderViewModel(editing: $0) } ?? PresetBuilderViewModel())
+    }
 
     var body: some View {
         NavigationStack {
@@ -73,7 +101,7 @@ struct PresetBuilderView: View {
                 warmupSection
                 cooldownSection
             }
-            .navigationTitle("New Preset")
+            .navigationTitle(viewModel.isEditing ? "Edit Preset" : "New Preset")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
