@@ -38,8 +38,8 @@ struct QuickTimerView: View {
                 Section {
                     Button {
                         let preset = buildPreset()
-                        dismiss()
                         onStart(preset)
+                        dismiss()
                     } label: {
                         HStack {
                             Spacer()
