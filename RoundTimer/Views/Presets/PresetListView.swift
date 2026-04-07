@@ -8,6 +8,7 @@ struct PresetListView: View {
     @State private var showingBuilder = false
     @State private var editingPreset: TimerPreset?
     @State private var duplicatingPreset: TimerPreset?
+    @State private var showingSettings = false
 
     var body: some View {
         NavigationStack {
@@ -73,6 +74,13 @@ struct PresetListView: View {
             }
             .navigationTitle("RoundTimer")
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        showingSettings = true
+                    } label: {
+                        Image(systemName: "gearshape")
+                    }
+                }
                 ToolbarItem(placement: .primaryAction) {
                     Button {
                         showingBuilder = true
@@ -80,6 +88,9 @@ struct PresetListView: View {
                         Image(systemName: "plus")
                     }
                 }
+            }
+            .sheet(isPresented: $showingSettings) {
+                SettingsView(settings: SettingsManager.shared)
             }
             .sheet(isPresented: $showingBuilder) {
                 PresetBuilderView(store: store)

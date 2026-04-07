@@ -25,30 +25,34 @@ Simple work/rest/rounds timer with presets, Live Activity, audio over music. NO 
 - **Project generation:** xcodegen (`project.yml` → `.xcodeproj`)
 - **Xcode:** 26.4, simulators: iPhone 17 Pro (iOS 26.4)
 
+## Prerequisites
+
+- **`xcode-select` must point to Xcode.app**, not CommandLineTools: `sudo xcode-select -s /Applications/Xcode.app/Contents/Developer`. Without this, `xcrun simctl` and XcodeBuildMCP fail.
+
 ## Commands
 
 ```bash
 # Regenerate Xcode project after changing project.yml
 xcodegen generate
 
-# Build for simulator
-DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild \
-  -project RoundTimer.xcodeproj \
-  -scheme RoundTimer \
-  -sdk iphonesimulator \
-  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
-  build
-
-# Build and run in simulator
-DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild \
-  -project RoundTimer.xcodeproj \
-  -scheme RoundTimer \
-  -sdk iphonesimulator \
-  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
-  build | tail -5
+# Build for simulator (no DEVELOPER_DIR needed if xcode-select is set correctly)
+xcodebuild -project RoundTimer.xcodeproj -scheme RoundTimer \
+  -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build
 
 # After adding/moving/deleting Swift files: always regenerate
-xcodegen generate && xcodebuild -project RoundTimer.xcodeproj -scheme RoundTimer -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build 2>&1 | tail -5
+xcodegen generate && xcodebuild -project RoundTimer.xcodeproj -scheme RoundTimer \
+  -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build 2>&1 | tail -5
+```
+
+## Simulator Interaction (XcodeBuildMCP)
+
+XcodeBuildMCP is configured as an MCP server for simulator workflows. Config: `.xcodebuildmcp/config.yaml`.
+
+```bash
+# Use XcodeBuildMCP tools instead of manual simctl commands:
+# - screenshot, snapshot_ui (UI hierarchy with coordinates), tap (by label or coordinates)
+# - build_run_sim (build + install + launch in one step)
+# - Session defaults are set: project, scheme, simulatorId, bundleId
 ```
 
 ## Architecture Summary
@@ -67,14 +71,16 @@ RoundTimerWidgetExtension/  — Live Activity + Dynamic Island rendering
 RoundTimerWatch/            — watchOS app (V1.1, defer for now)
 ```
 
-**TimerEngine** is a plain `@Observable` class — no SwiftUI dependency. Works identically on iPhone and Watch.
+**TimerEngine** is an `@MainActor @Observable` class. Works identically on iPhone and Watch.
 
 ## Key Rules
 
 1. **Audio MUST use `.ambient` + `.mixWithOthers`** — timer sounds play over Spotify. Using `.playback` (the default) steals audio focus. This is the #1 competitor complaint.
 2. **Live Activity uses `Text(timerInterval:countsDown:)`** — OS-native countdown, no push infra needed, works even if app is killed.
-3. **Shared files between app and widget extension:** `TimerActivityAttributes.swift` and `TimerPhase.swift` must be in both targets' sources in `project.yml`.
+3. **Shared files between app and widget extension:** `TimerPhase.swift` and `SoundEvent.swift` are added to both targets in `project.yml`. `TimerActivityAttributes` is defined directly in the widget bundle.
 4. **After adding/moving/deleting any Swift file**, run `xcodegen generate` to regenerate the project.
+5. **Widget extension Info.plist** — `NSExtension.NSExtensionPointIdentifier` must be set via `info.properties` in project.yml (not via build settings like `INFOPLIST_KEY_*`).
+6. **Swift 6 strict concurrency** — Classes using UIKit types (UIImpactFeedbackGenerator, etc.) need `@MainActor`. `Timer.scheduledTimer` closures need `MainActor.assumeIsolated { }` wrapper.
 5. **Wall-clock time for accuracy** — Timer tick uses `Timer.scheduledTimer` but actual countdown is calculated from `Date()` difference. Ticks drift; wall clock doesn't.
 6. **Screen stays awake** during active timer: `UIApplication.shared.isIdleTimerDisabled = true`
 

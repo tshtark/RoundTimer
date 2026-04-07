@@ -65,6 +65,7 @@ This file is read and updated by the automated development loop. Each run picks 
 
 - [x] Interval progress bar on ActiveTimerView (thin bar showing progress through current interval)
 - [x] Elapsed workout time display on ActiveTimerView (total time since workout started)
+- [x] Settings screen (sound, haptics, screen awake, countdown beeps toggles + about section)
 
 ---
 
@@ -256,3 +257,10 @@ Each automated run appends a brief entry here.
 - Files changed: RoundTimer/Engine/TimerEngine.swift (added workoutStartDate, elapsedTime computed property), RoundTimer/Views/ActiveTimer/ActiveTimerView.swift (added elapsed time display with formatElapsed helper)
 - Tested: Started Tabata, waited ~20 seconds → bottom shows "0:20 · Tabata — Interval 2/2" with clock icon
 - Visual QA: pass — elapsed time ticks correctly, displays alongside preset info
+
+### Run 27 — 2026-04-07 21:42
+- Task: Phase 4 — Settings screen with sound/haptics/display toggles + about section
+- Result: COMPLETED — full settings UI with UserDefaults persistence
+- Files changed: RoundTimer/Engine/SettingsManager.swift (NEW — @Observable @MainActor singleton with 4 toggles), RoundTimer/Views/Settings/SettingsView.swift (NEW — Form with 3 sections), RoundTimer/Engine/AudioManager.swift (added sound + countdown guards), RoundTimer/Engine/HapticManager.swift (added haptics guards), RoundTimer/Views/ActiveTimer/ActiveTimerView.swift (keepScreenAwake from settings), RoundTimer/Views/Presets/PresetListView.swift (gear icon + settings sheet)
+- Tested: Opened settings via gear icon → all 4 toggles default ON → toggled Sound Effects OFF (switch turned grey) → toggled back ON → tapped Done → returned to preset list
+- Visual QA: pass — settings screen renders correctly, toggles functional, dismissal works
