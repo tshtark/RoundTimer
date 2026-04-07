@@ -72,6 +72,7 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] Quick Start — one-tap timer with work/rest/rounds pickers, no preset saved
 - [x] Workout History — tracks completed workouts with date, duration, rounds; persisted via JSON
 - [x] Weekly activity summary on home screen (workouts count, total time, day streak)
+- [x] Circular progress ring on active timer (replaces linear bar, premium visual upgrade)
 
 ---
 
@@ -305,3 +306,10 @@ Each automated run appends a brief entry here.
 - Files changed: RoundTimer/Views/Presets/PresetListView.swift (added weeklyRecords, weeklyTotalDuration, currentStreak computed properties, formatWeeklyDuration helper, "This Week" section in List)
 - Tested: Verified with 1 workout → showed "1 Workout, 0m, 1 Day Streak". Completed second workout → updated to "2 Workouts". Section hidden when no history records exist.
 - Visual QA: pass — summary section clean with green accent colors, orange streak, proper pluralization
+
+### Run 33 — 2026-04-07 22:18
+- Task: Phase 4 — Circular progress ring on active timer screen
+- Result: COMPLETED — replaced linear progress bar with circular ring around countdown text
+- Files changed: RoundTimer/Views/ActiveTimer/ActiveTimerView.swift (replaced GeometryReader+Capsule progress bar with ZStack Circle ring, 260x260 frame, 12pt stroke with round linecap)
+- Tested: Started AMRAP → circular ring visible with green fill progressing clockwise from top. Countdown text centered inside ring. Ring animates smoothly. Stopped → returned to preset list.
+- Visual QA: pass — premium circular progress ring looks professional, smooth animation, clean layout

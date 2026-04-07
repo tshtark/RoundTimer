@@ -12,23 +12,7 @@ struct ActiveTimerView: View {
                 .ignoresSafeArea()
                 .animation(.easeInOut(duration: 0.5), value: engine.currentPhase)
 
-            VStack(spacing: 24) {
-                // Interval progress bar
-                GeometryReader { geo in
-                    ZStack(alignment: .leading) {
-                        Capsule()
-                            .fill(engine.currentPhase.color.opacity(0.2))
-                            .frame(height: 6)
-                        Capsule()
-                            .fill(engine.currentPhase.color)
-                            .frame(width: geo.size.width * engine.progress, height: 6)
-                            .animation(.linear(duration: 0.1), value: engine.progress)
-                    }
-                }
-                .frame(height: 6)
-                .padding(.horizontal, 24)
-                .padding(.top, 8)
-
+            VStack(spacing: 20) {
                 Spacer()
 
                 // Phase name
@@ -56,21 +40,38 @@ struct ActiveTimerView: View {
                         .animation(.spring(duration: 0.3), value: engine.isHalfTime)
                 }
 
-                // Big countdown
-                Text(formatTime(engine.timeRemaining))
-                    .font(.system(size: 96, weight: .bold, design: .monospaced))
-                    .minimumScaleFactor(0.5)
-                    .lineLimit(1)
-                    .foregroundStyle(engine.timeRemaining <= 10 && engine.timeRemaining > 0 ? .red : .primary)
-                    .accessibilityLabel("\(Int(ceil(engine.timeRemaining))) seconds remaining")
-                    .contentTransition(.numericText())
-                    .animation(.linear(duration: 0.1), value: Int(engine.timeRemaining))
-                    .phaseAnimator([false, true], trigger: Int(ceil(engine.timeRemaining))) { content, phase in
-                        content
-                            .scaleEffect(engine.timeRemaining <= 10 && engine.timeRemaining > 0 && phase ? 1.08 : 1.0)
-                    } animation: { _ in
-                        .easeInOut(duration: 0.3)
-                    }
+                // Circular progress ring with countdown
+                ZStack {
+                    // Background ring
+                    Circle()
+                        .stroke(engine.currentPhase.color.opacity(0.15), lineWidth: 12)
+                    // Progress ring
+                    Circle()
+                        .trim(from: 0, to: engine.progress)
+                        .stroke(
+                            engine.currentPhase.color,
+                            style: StrokeStyle(lineWidth: 12, lineCap: .round)
+                        )
+                        .rotationEffect(.degrees(-90))
+                        .animation(.linear(duration: 0.1), value: engine.progress)
+                    // Countdown text
+                    Text(formatTime(engine.timeRemaining))
+                        .font(.system(size: 72, weight: .bold, design: .monospaced))
+                        .minimumScaleFactor(0.5)
+                        .lineLimit(1)
+                        .foregroundStyle(engine.timeRemaining <= 10 && engine.timeRemaining > 0 ? .red : .primary)
+                        .accessibilityLabel("\(Int(ceil(engine.timeRemaining))) seconds remaining")
+                        .contentTransition(.numericText())
+                        .animation(.linear(duration: 0.1), value: Int(engine.timeRemaining))
+                        .phaseAnimator([false, true], trigger: Int(ceil(engine.timeRemaining))) { content, phase in
+                            content
+                                .scaleEffect(engine.timeRemaining <= 10 && engine.timeRemaining > 0 && phase ? 1.08 : 1.0)
+                        } animation: { _ in
+                            .easeInOut(duration: 0.3)
+                        }
+                }
+                .frame(width: 260, height: 260)
+                .padding(.vertical, 8)
 
                 // Round progress
                 Text("Round \(engine.currentRound) / \(engine.totalRounds)")
