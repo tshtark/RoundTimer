@@ -181,6 +181,29 @@ struct ActiveTimerView: View {
             }
         }
         .overlay {
+            if engine.isPaused && !engine.isFinished {
+                VStack {
+                    Spacer()
+                    VStack(spacing: 8) {
+                        Image(systemName: "pause.circle.fill")
+                            .font(.system(size: 36))
+                            .foregroundStyle(.white)
+                        Text("PAUSED")
+                            .font(.system(size: 20, weight: .bold, design: .rounded))
+                            .foregroundStyle(.white)
+                    }
+                    .padding(.horizontal, 32)
+                    .padding(.vertical, 16)
+                    .background(.black.opacity(0.6))
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    Spacer()
+                    Spacer()
+                }
+                .transition(.opacity)
+                .animation(.easeInOut(duration: 0.2), value: engine.isPaused)
+            }
+        }
+        .overlay {
             if engine.isFinished {
                 finishedOverlay
             }

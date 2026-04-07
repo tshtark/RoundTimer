@@ -81,6 +81,7 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] Preset color accent strip (left border strip on each preset row matching primary phase color)
 - [x] Total remaining workout time display (hourglass icon with countdown at bottom of active timer)
 - [x] QA: Preset builder "+" button — visible and functional (simctl automation can't access nav bar buttons, but works for real users; previously tested in Runs 9-11)
+- [x] Paused overlay (floating badge with pause icon + "PAUSED" text when timer is paused)
 
 ---
 
@@ -391,3 +392,10 @@ Each automated run appends a brief entry here.
 - Result: NOTED — "+" button is visible on screen and functional for real users, but simctl accessibility automation cannot access NavigationStack toolbar buttons (they're not exposed in the accessibility tree when using .large title display mode). Previously verified working in Runs 9-11 (create, edit, duplicate presets all tested).
 - Files changed: docs/progress.md only
 - Visual QA: pass — button visible in all screenshots, documented automation limitation
+
+### Run 42 — 2026-04-07 23:02
+- Task: Phase 4 — Paused overlay on active timer
+- Result: COMPLETED — floating badge with pause icon and "PAUSED" text
+- Files changed: RoundTimer/Views/ActiveTimer/ActiveTimerView.swift (added paused overlay with rounded rectangle chip, pause icon, "PAUSED" text, fade transition)
+- Tested: Started Tabata → tapped Pause → "PAUSED" badge appeared inside ring area → tapped Resume → badge disappeared, timer continued from 0:03 → stopped and returned to preset list
+- Visual QA: pass — paused state clearly communicated, no overlap with other elements, smooth transition
