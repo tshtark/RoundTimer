@@ -20,7 +20,7 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] Pause freezes countdown, Resume continues from where it stopped
 - [x] Skip advances to next phase immediately
 - [x] Timer completes all rounds and shows "COMPLETE" overlay
-- [ ] Timer with warmup phase works correctly
+- [x] Timer with warmup phase works correctly
 - [ ] Timer with cooldown phase works correctly
 - [ ] Swipe-to-delete works on user presets (not built-in)
 - [ ] App survives background/foreground cycle (wall-clock recalculation)
@@ -93,3 +93,10 @@ Each automated run appends a brief entry here.
 - Result: PASSED — no code changes needed
 - Tested: Started AMRAP (1 round, 1 interval), skipped to end → "COMPLETE!" overlay with green checkmark and Done button appeared. Tapped Done → returned to preset list.
 - Visual QA: pass — completion overlay renders correctly, Done button navigates back
+
+### Run 5 — 2026-04-07 18:08
+- Task: QA — Timer with warmup phase works correctly
+- Result: PASSED — added warmup (10s) and cooldown (10s) to Custom preset to enable testing
+- Files changed: RoundTimer/Persistence/PresetStore.swift
+- Tested: Started Custom preset → WARMUP phase appeared (yellow background, gold text, countdown from 10s), then auto-transitioned to WORK (green background, 30s countdown). Warmup works correctly.
+- Visual QA: pass — warmup phase renders with correct color and transitions to work phase
