@@ -44,8 +44,8 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] Live Activity — lock screen shows phase + countdown + round
 - [x] Live Activity — Dynamic Island compact and expanded views
 - [x] Last-used preset highlighted/sorted on app launch
-- [ ] Built-in presets cannot be deleted (UI enforcement)
-- [ ] Proper sound files for phase transitions (bundled .caf/.wav or system sounds that actually play)
+- [x] Built-in presets cannot be deleted (UI enforcement)
+- [x] Proper sound files for phase transitions (bundled .caf/.wav or system sounds that actually play)
 
 ## Phase 3: UI/UX Improvements
 
@@ -178,3 +178,15 @@ Each automated run appends a brief entry here.
 - Files changed: RoundTimer/Views/Presets/PresetListView.swift (added sortedPresets computed property, isLastUsed param to PresetRow, "Recent" badge)
 - Tested: Tapped EMOM to use it → stopped → returned to list → EMOM moved to top with purple "Recent" badge. Other presets maintained relative order.
 - Visual QA: pass — sorting and badge work correctly
+
+### Run 17 — 2026-04-07 19:38
+- Task: Phase 2 — Built-in presets cannot be deleted (UI enforcement)
+- Result: ALREADY IMPLEMENTED in Run 7 — .deleteDisabled(preset.isBuiltIn) prevents swipe-to-delete on built-in presets, PresetStore.delete() guards against it in code
+- No code changes needed
+
+### Run 17b — 2026-04-07 19:38
+- Task: Phase 2 — Proper sound files for phase transitions
+- Result: ALREADY IMPLEMENTED — AudioManager uses AudioServicesPlaySystemSound with distinct IDs per event (workStart=1304, restStart=1057, countdownBeep=1103, etc.). Uses .ambient + .mixWithOthers as required. Custom .caf/.wav bundled sounds deferred to V1.1 per PRD.
+- No code changes needed
+
+**Phase 2 COMPLETE — all V1 required features implemented.**
