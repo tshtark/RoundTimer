@@ -43,7 +43,7 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] Live Activity — start/update/end lifecycle wired to TimerEngine
 - [x] Live Activity — lock screen shows phase + countdown + round
 - [x] Live Activity — Dynamic Island compact and expanded views
-- [ ] Last-used preset highlighted/sorted on app launch
+- [x] Last-used preset highlighted/sorted on app launch
 - [ ] Built-in presets cannot be deleted (UI enforcement)
 - [ ] Proper sound files for phase transitions (bundled .caf/.wav or system sounds that actually play)
 
@@ -171,3 +171,10 @@ Each automated run appends a brief entry here.
 - Files changed: RoundTimer/LiveActivity/TimerActivityManager.swift (NEW), RoundTimer/LiveActivity/TimerActivityAttributes.swift (NEW — shared between app and widget), RoundTimer/Models/TimerPhase.swift (added colorHex), RoundTimer/Views/Presets/PresetListView.swift (wired start/update/end), RoundTimerWidgetExtension/RoundTimerWidgetBundle.swift (removed duplicate attributes), project.yml (shared TimerActivityAttributes with widget)
 - Lock screen + Dynamic Island UI was already implemented in RoundTimerWidgetBundle.swift from Run 1
 - Visual QA: pass — app launches, timer runs without crash, Live Activity lifecycle wired to engine callbacks
+
+### Run 16 — 2026-04-07 19:34
+- Task: Phase 2 — Last-used preset highlighted/sorted on app launch
+- Result: COMPLETED — presets sorted by lastUsedAt (most recent first), "Recent" badge on top preset
+- Files changed: RoundTimer/Views/Presets/PresetListView.swift (added sortedPresets computed property, isLastUsed param to PresetRow, "Recent" badge)
+- Tested: Tapped EMOM to use it → stopped → returned to list → EMOM moved to top with purple "Recent" badge. Other presets maintained relative order.
+- Visual QA: pass — sorting and badge work correctly

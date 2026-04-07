@@ -12,8 +12,8 @@ struct PresetListView: View {
     var body: some View {
         NavigationStack {
             List {
-                ForEach(store.presets) { preset in
-                    PresetRow(preset: preset)
+                ForEach(sortedPresets) { preset in
+                    PresetRow(preset: preset, isLastUsed: preset.lastUsedAt != nil && preset.id == sortedPresets.first?.id)
                         .contentShape(Rectangle())
                         .onTapGesture {
                             selectedPreset = preset
@@ -46,8 +46,9 @@ struct PresetListView: View {
                         .deleteDisabled(preset.isBuiltIn)
                 }
                 .onDelete { indexSet in
+                    let sorted = sortedPresets
                     for index in indexSet {
-                        let preset = store.presets[index]
+                        let preset = sorted[index]
                         store.delete(preset)
                     }
                 }
@@ -81,6 +82,14 @@ struct PresetListView: View {
         }
     }
 
+    private var sortedPresets: [TimerPreset] {
+        store.presets.sorted { a, b in
+            let aDate = a.lastUsedAt ?? .distantPast
+            let bDate = b.lastUsedAt ?? .distantPast
+            return aDate > bDate
+        }
+    }
+
     private func configureEngineCallbacks() {
         engine.onPhaseChange = { [engine] phase in
             AudioManager.shared.resetCountdown()
@@ -108,6 +117,7 @@ struct PresetListView: View {
 
 struct PresetRow: View {
     let preset: TimerPreset
+    var isLastUsed: Bool = false
 
     var body: some View {
         HStack {
@@ -119,6 +129,16 @@ struct PresetRow: View {
                         Image(systemName: "star.fill")
                             .font(.caption2)
                             .foregroundStyle(.yellow)
+                    }
+                    if isLastUsed {
+                        Text("Recent")
+                            .font(.caption2)
+                            .fontWeight(.medium)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(.purple.opacity(0.15))
+                            .foregroundStyle(.purple)
+                            .clipShape(Capsule())
                     }
                 }
 
