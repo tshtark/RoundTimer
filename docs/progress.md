@@ -87,6 +87,7 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] Share completed workout from finish screen (duration, rounds, intervals share text)
 - [x] QA: Comprehensive code audit of ActiveTimerView + PresetListView (45-run accumulated changes)
 - [x] Fix AudioManager to use AVAudioPlayer instead of AudioServicesPlaySystemSound (CLAUDE.md Rule #1)
+- [x] Fix RoundTimerApp init — move audio/haptic setup to ContentView.onAppear (Swift 6 concurrency)
 
 ---
 
@@ -444,3 +445,10 @@ Each automated run appends a brief entry here.
 - Details: AudioServicesPlaySystemSound bypasses AVAudioSession entirely, meaning timer sounds would interrupt Spotify. Now uses AVAudioPlayer which respects the .ambient + .mixWithOthers session configuration. Sounds preloaded at app launch for zero latency.
 - Tested: Started AMRAP → timer runs without crash, audio system configured correctly
 - Visual QA: pass — timer functional, no audio crashes
+
+### Run 48 — 2026-04-07 23:31
+- Task: Fix RoundTimerApp.init() calling @MainActor methods off-actor
+- Result: COMPLETED — moved AudioManager.configure() and HapticManager.prepare() to ContentView.onAppear
+- Files changed: RoundTimer/App/RoundTimerApp.swift (removed init()), RoundTimer/App/ContentView.swift (added .onAppear with audio/haptic setup)
+- Tested: App launches correctly, all features functional
+- Visual QA: pass — app launches, preset list renders, weekly summary displays
