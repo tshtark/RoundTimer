@@ -84,6 +84,7 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] Paused overlay (floating badge with pause icon + "PAUSED" text when timer is paused)
 - [x] Haptic feedback on timer control buttons (pause/resume, skip, stop — sensoryFeedback API)
 - [x] Share preset via system share sheet (text summary with intervals, rounds, duration)
+- [x] Share completed workout from finish screen (duration, rounds, intervals share text)
 
 ---
 
@@ -415,3 +416,10 @@ Each automated run appends a brief entry here.
 - Files changed: RoundTimer/Views/Presets/PresetListView.swift (added ShareLink to context menu, shareText helper function generating formatted preset description)
 - Tested: Long-pressed Tabata (built-in) → context menu shows Duplicate + Share (no Edit — correct). Tapped Share → system share sheet opened with "Tabata" preview showing Copy, Save to Files, Reminders, More options.
 - Visual QA: pass — share sheet opens correctly, preset text formatted with intervals and duration
+
+### Run 45 — 2026-04-07 23:17
+- Task: Phase 4 — Share completed workout from finish screen
+- Result: COMPLETED — "Share Workout" button on completion overlay with stats text
+- Files changed: RoundTimer/Views/ActiveTimer/ActiveTimerView.swift (added ShareLink button above Done, workoutShareText computed property with preset name, duration, rounds, intervals)
+- Tested: Completed AMRAP → finish screen shows "Share Workout" (green outline) above "Done" (solid green). Share text includes "AMRAP 10min — Done! 0:07 · 1 round · 1 intervals. Tracked with RoundTimer".
+- Visual QA: pass — both buttons clean, proper spacing, share button uses system ShareLink

@@ -285,16 +285,33 @@ struct ActiveTimerView: View {
 
                 Spacer()
 
-                Button("Done") {
-                    onStop()
+                // Share + Done buttons
+                VStack(spacing: 12) {
+                    ShareLink(item: workoutShareText) {
+                        HStack {
+                            Spacer()
+                            Label("Share Workout", systemImage: "square.and.arrow.up")
+                                .font(.body)
+                                .fontWeight(.semibold)
+                            Spacer()
+                        }
+                        .foregroundStyle(.green)
+                        .padding(.vertical, 14)
+                        .background(.green.opacity(0.15))
+                        .clipShape(Capsule())
+                    }
+
+                    Button("Done") {
+                        onStop()
+                    }
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(.green)
+                    .clipShape(Capsule())
                 }
-                .font(.title2)
-                .fontWeight(.semibold)
-                .foregroundStyle(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
-                .background(.green)
-                .clipShape(Capsule())
                 .padding(.horizontal, 40)
                 .padding(.bottom, 40)
                 .opacity(celebrationOpacity)
@@ -320,6 +337,18 @@ struct ActiveTimerView: View {
             "One step closer to your goals!"
         ]
         return messages[abs(engine.presetName.hashValue) % messages.count]
+    }
+
+    private var workoutShareText: String {
+        let duration = formatElapsed(engine.finalElapsedTime)
+        let rounds = engine.totalRounds
+        let intervals = engine.totalRounds * engine.totalIntervals
+        return """
+        \(engine.presetName) — Done!
+        \(duration) · \(rounds) \(rounds == 1 ? "round" : "rounds") · \(intervals) intervals
+
+        Tracked with RoundTimer
+        """
     }
 
     private func statCard(icon: String, value: String, label: String) -> some View {
