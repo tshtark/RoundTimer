@@ -29,8 +29,15 @@ struct ActiveTimerView: View {
                 // Big countdown
                 Text(formatTime(engine.timeRemaining))
                     .font(.system(size: 96, weight: .bold, design: .monospaced))
+                    .foregroundStyle(engine.timeRemaining <= 10 && engine.timeRemaining > 0 ? .red : .primary)
                     .contentTransition(.numericText())
                     .animation(.linear(duration: 0.1), value: Int(engine.timeRemaining))
+                    .phaseAnimator([false, true], trigger: Int(ceil(engine.timeRemaining))) { content, phase in
+                        content
+                            .scaleEffect(engine.timeRemaining <= 10 && engine.timeRemaining > 0 && phase ? 1.08 : 1.0)
+                    } animation: { _ in
+                        .easeInOut(duration: 0.3)
+                    }
 
                 // Round progress
                 Text("Round \(engine.currentRound) / \(engine.totalRounds)")

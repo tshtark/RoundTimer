@@ -39,7 +39,7 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] PresetBuilderView — duplicate built-in presets for editing
 - [x] Screen stays awake during active timer (UIApplication.shared.isIdleTimerDisabled)
 - [x] 3-2-1 countdown beeps with deduplicated firing (once per second, not per tick)
-- [ ] Final 10 seconds visual indicator (pulse or color change on countdown text)
+- [x] Final 10 seconds visual indicator (pulse or color change on countdown text)
 - [ ] Live Activity — start/update/end lifecycle wired to TimerEngine
 - [ ] Live Activity — lock screen shows phase + countdown + round
 - [ ] Live Activity — Dynamic Island compact and expanded views
@@ -157,3 +157,10 @@ Each automated run appends a brief entry here.
 - Verified: AudioManager.playCountdownIfNeeded(secondsLeft:) already deduplicates via lastCountdownTick tracking. TimerEngine.tick() fires onCountdownTick at ≤3s, AudioManager only plays once per second value. resetCountdown() called on phase change.
 - Tested: Started Tabata, let WORK phase run to completion → transitioned to REST at 0:03, confirming countdown fired correctly through the transition.
 - Visual QA: pass — timer runs normally, phase transitions occur at correct times
+
+### Run 14 — 2026-04-07 19:23
+- Task: Phase 2 — Final 10 seconds visual indicator
+- Result: COMPLETED — red countdown text + subtle scale pulse in last 10 seconds
+- Files changed: RoundTimer/Views/ActiveTimer/ActiveTimerView.swift
+- Tested: Started Tabata, skipped to REST (10s) → countdown text turned red immediately (entire REST phase is ≤10s). Scale pulse animates on each second change via phaseAnimator.
+- Visual QA: pass — red text clearly visible at 0:04 on blue REST background
