@@ -64,6 +64,7 @@ This file is read and updated by the automated development loop. Each run picks 
 ## Phase 4: New Features (Beyond V1 PRD — Low Priority)
 
 - [x] Interval progress bar on ActiveTimerView (thin bar showing progress through current interval)
+- [x] Elapsed workout time display on ActiveTimerView (total time since workout started)
 
 ---
 
@@ -248,3 +249,10 @@ Each automated run appends a brief entry here.
 - Files changed: RoundTimer/Views/ActiveTimer/ActiveTimerView.swift (added GeometryReader + Capsule progress bar using engine.progress)
 - Uses phase color for the fill, animates smoothly with .linear(duration: 0.1)
 - Visual QA: pass — green progress bar visible at ~80% fill with 4s remaining on 20s WORK interval
+
+### Run 26 — 2026-04-07 20:24
+- Task: Phase 4 — Elapsed workout time display on ActiveTimerView
+- Result: COMPLETED — clock icon + elapsed time at bottom of timer screen
+- Files changed: RoundTimer/Engine/TimerEngine.swift (added workoutStartDate, elapsedTime computed property), RoundTimer/Views/ActiveTimer/ActiveTimerView.swift (added elapsed time display with formatElapsed helper)
+- Tested: Started Tabata, waited ~20 seconds → bottom shows "0:20 · Tabata — Interval 2/2" with clock icon
+- Visual QA: pass — elapsed time ticks correctly, displays alongside preset info

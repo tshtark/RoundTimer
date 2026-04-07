@@ -121,11 +121,18 @@ struct ActiveTimerView: View {
                     Text("Your workout progress will be lost.")
                 }
 
-                // Preset name + interval position
-                Text("\(engine.presetName) — Interval \(engine.currentIntervalIndex + 1)/\(engine.totalIntervals)")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .padding(.bottom, 8)
+                // Elapsed time + preset info
+                HStack {
+                    Image(systemName: "clock")
+                        .font(.caption2)
+                    Text(formatElapsed(engine.elapsedTime))
+                        .monospacedDigit()
+                    Text("·")
+                    Text("\(engine.presetName) — Interval \(engine.currentIntervalIndex + 1)/\(engine.totalIntervals)")
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .padding(.bottom, 8)
             }
         }
         .overlay {
@@ -171,6 +178,13 @@ struct ActiveTimerView: View {
 
     private func formatTime(_ time: TimeInterval) -> String {
         let total = max(0, Int(ceil(time)))
+        let minutes = total / 60
+        let seconds = total % 60
+        return String(format: "%d:%02d", minutes, seconds)
+    }
+
+    private func formatElapsed(_ time: TimeInterval) -> String {
+        let total = max(0, Int(time))
         let minutes = total / 60
         let seconds = total % 60
         return String(format: "%d:%02d", minutes, seconds)

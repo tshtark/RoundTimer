@@ -26,6 +26,14 @@ class TimerEngine {
         return 1.0 - (timeRemaining / currentPhaseDuration)
     }
 
+    // MARK: - Elapsed Time
+    var workoutStartDate: Date?
+
+    var elapsedTime: TimeInterval {
+        guard let start = workoutStartDate else { return 0 }
+        return Date().timeIntervalSince(start)
+    }
+
     // MARK: - Internal State
     private var preset: TimerPreset?
     private var timer: Timer?
@@ -49,6 +57,7 @@ class TimerEngine {
         self.isRunning = true
         self.isPaused = false
         self.isFinished = false
+        self.workoutStartDate = Date()
 
         if let warmup = preset.warmup, warmup > 0 {
             enterPhase(.warmup, duration: warmup, name: nil)
@@ -79,6 +88,7 @@ class TimerEngine {
         isFinished = false
         timeRemaining = 0
         preset = nil
+        workoutStartDate = nil
     }
 
     func skip() {
