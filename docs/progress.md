@@ -75,6 +75,7 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] Circular progress ring on active timer (replaces linear bar, premium visual upgrade)
 - [x] Radial gradient background on active timer (phase-colored glow from center, adaptive light/dark)
 - [x] Animated completion celebration (spring bounce checkmark, motivational messages, fade-in stats)
+- [x] QA: Full Tabata end-to-end test (8 rounds, WORK/REST transitions, completion, history)
 
 ---
 
@@ -329,3 +330,20 @@ Each automated run appends a brief entry here.
 - Files changed: RoundTimer/Views/ActiveTimer/ActiveTimerView.swift (added celebrationScale/celebrationOpacity states, spring animation on overlay appear, motivationalMessage computed property with 8 messages, onChange reset)
 - Tested: Completed AMRAP → checkmark bounced in with spring animation, "Strong finish!" motivational message displayed in green italic, stats and Done button faded in. Tapped Done → returned to preset list (3 Workouts in weekly summary).
 - Visual QA: pass — celebration animation smooth, motivational message adds premium feel
+
+### Run 36 — 2026-04-07 22:33
+- Task: QA — Full Tabata end-to-end test (8 rounds, multi-interval, complete lifecycle)
+- Result: PASSED — no bugs found, all features verified
+- Files changed: docs/progress.md only
+- QA checklist:
+  - WORK→REST phase transition: PASS (natural transition at 20s)
+  - Round counter: PASS (increments 1→2→...→8 correctly)
+  - Round dots: PASS (fill progressively, all 8 filled at round 8)
+  - Circular progress ring: PASS (fills and resets each phase)
+  - Elapsed time: PASS (2:07 at round 8, 2:23 at completion)
+  - Completion overlay: PASS (8 rounds, 16 intervals, 2:23 duration)
+  - Celebration animation: PASS (checkmark bounce, "Great work! You crushed it!")
+  - Weekly summary update: PASS (4 Workouts, 2m Total Time after completion)
+  - Preset reorder: PASS (Tabata moved to top with Recent badge)
+  - Navigation: PASS (Done → preset list)
+- Visual QA: pass — production-ready quality, no bugs or visual glitches
