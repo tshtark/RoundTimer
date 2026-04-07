@@ -3,6 +3,7 @@ import SwiftUI
 struct ActiveTimerView: View {
     @Bindable var engine: TimerEngine
     var onStop: () -> Void
+    @State private var showStopConfirmation = false
 
     var body: some View {
         ZStack {
@@ -81,7 +82,7 @@ struct ActiveTimerView: View {
 
                     // Stop
                     Button {
-                        onStop()
+                        showStopConfirmation = true
                     } label: {
                         Image(systemName: "stop.circle.fill")
                             .font(.system(size: 60))
@@ -89,6 +90,14 @@ struct ActiveTimerView: View {
                     }
                 }
                 .padding(.bottom, 20)
+                .alert("Stop Timer?", isPresented: $showStopConfirmation) {
+                    Button("Stop", role: .destructive) {
+                        onStop()
+                    }
+                    Button("Cancel", role: .cancel) { }
+                } message: {
+                    Text("Your workout progress will be lost.")
+                }
 
                 // Preset name + interval position
                 Text("\(engine.presetName) — Interval \(engine.currentIntervalIndex + 1)/\(engine.totalIntervals)")

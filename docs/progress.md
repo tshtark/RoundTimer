@@ -56,7 +56,7 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] Larger, bolder round dots with better spacing
 - [x] Better typography hierarchy on PresetListView
 - [x] Empty state if no user presets yet (encouraging message)
-- [ ] Confirmation dialog before stopping an active timer
+- [x] Confirmation dialog before stopping an active timer
 - [ ] Smooth fullScreenCover transition animation
 - [ ] Accessibility: VoiceOver labels on all controls
 - [ ] Accessibility: Dynamic Type support on countdown text
@@ -223,3 +223,10 @@ Each automated run appends a brief entry here.
 - Files changed: RoundTimer/Views/Presets/PresetListView.swift (added conditional section with timer icon, headline, and subtitle)
 - Tested: Deleted presets.json to get only built-in presets → scrolled down → "Create Your Own Timer" section visible at bottom
 - Visual QA: pass — empty state message shows correctly, disappears when user presets exist
+
+### Run 23 — 2026-04-07 20:08
+- Task: Phase 3 — Confirmation dialog before stopping an active timer
+- Result: COMPLETED — stop button now shows "Stop Timer?" alert with Cancel/Stop options
+- Files changed: RoundTimer/Views/ActiveTimer/ActiveTimerView.swift (added showStopConfirmation state, .alert modifier, destructive Stop + Cancel buttons)
+- Tested: Started Tabata → tapped Stop → "Stop Timer?" dialog appeared → tapped Cancel → timer continued. Tapped Stop again → tapped Stop (destructive) → returned to preset list.
+- Visual QA: pass — dialog shows with correct title/message, Cancel continues timer, Stop ends it
