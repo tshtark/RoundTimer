@@ -31,6 +31,8 @@ class AudioManager {
             soundID = 1114  // alert tone
         case .countdownBeep:
             soundID = 1103  // tock
+        case .halfTime:
+            soundID = 1113  // subtle double-tap
         case .timerComplete:
             soundID = 1025  // fanfare-ish
         }

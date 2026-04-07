@@ -39,11 +39,14 @@ class TimerEngine {
     private var preset: TimerPreset?
     private var timer: Timer?
     private var phaseStartDate: Date?
-    private var currentPhaseDuration: TimeInterval = 0
+    private(set) var currentPhaseDuration: TimeInterval = 0
+
+    private var halfTimeFired: Bool = false
 
     // MARK: - Callbacks
     var onPhaseChange: (@MainActor (TimerPhase) -> Void)?
     var onCountdownTick: (@MainActor (Int) -> Void)?
+    var onHalfTime: (@MainActor () -> Void)?
     var onComplete: (@MainActor () -> Void)?
 
     // MARK: - Controls
@@ -105,6 +108,7 @@ class TimerEngine {
         timeRemaining = duration
         intervalName = name
         phaseStartDate = Date()
+        halfTimeFired = false
         onPhaseChange?(phase)
     }
 
@@ -181,6 +185,15 @@ class TimerEngine {
         let elapsed = Date().timeIntervalSince(phaseStartDate)
         let remaining = currentPhaseDuration - elapsed
         timeRemaining = max(0, remaining)
+
+        // Half-time alert (only for intervals >= 10 seconds)
+        if !halfTimeFired && currentPhaseDuration >= 10 {
+            let halfPoint = currentPhaseDuration / 2.0
+            if elapsed >= halfPoint {
+                halfTimeFired = true
+                onHalfTime?()
+            }
+        }
 
         let secondsLeft = Int(ceil(timeRemaining))
         if secondsLeft <= 3 && secondsLeft > 0 && remaining > 0 {

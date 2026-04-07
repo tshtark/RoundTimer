@@ -4,6 +4,7 @@ struct ActiveTimerView: View {
     @Bindable var engine: TimerEngine
     var onStop: () -> Void
     @State private var showStopConfirmation = false
+    @State private var showHalfTime = false
 
     var body: some View {
         ZStack {
@@ -41,6 +42,18 @@ struct ActiveTimerView: View {
                     Text(name)
                         .font(.title3)
                         .foregroundStyle(.secondary)
+                }
+
+                // Half-time indicator
+                if showHalfTime {
+                    Text("HALFWAY")
+                        .font(.system(size: 16, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 6)
+                        .background(engine.currentPhase.color.opacity(0.8))
+                        .clipShape(Capsule())
+                        .transition(.scale.combined(with: .opacity))
                 }
 
                 // Big countdown
@@ -138,6 +151,21 @@ struct ActiveTimerView: View {
         .overlay {
             if engine.isFinished {
                 finishedOverlay
+            }
+        }
+        .onChange(of: engine.currentPhase) { _, _ in
+            showHalfTime = false
+        }
+        .onChange(of: engine.progress) { _, newProgress in
+            if newProgress >= 0.5 && !showHalfTime && !engine.isFinished && engine.currentPhaseDuration >= 10 {
+                withAnimation(.spring(duration: 0.3)) {
+                    showHalfTime = true
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                    withAnimation(.easeOut(duration: 0.5)) {
+                        showHalfTime = false
+                    }
+                }
             }
         }
         .onAppear {

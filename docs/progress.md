@@ -67,6 +67,8 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] Elapsed workout time display on ActiveTimerView (total time since workout started)
 - [x] Settings screen (sound, haptics, screen awake, countdown beeps toggles + about section)
 - [x] Workout completion summary (duration, rounds, intervals stats on finish screen)
+- [x] Half-time alert (visual badge + sound + haptic at 50% of intervals >= 10s)
+- [x] Grammar fix: "1 round" instead of "1 rounds" on preset list
 
 ---
 
@@ -272,3 +274,10 @@ Each automated run appends a brief entry here.
 - Files changed: RoundTimer/Views/ActiveTimer/ActiveTimerView.swift (replaced simple COMPLETE overlay with full summary: checkmark, preset name, 3 stat cards with icons, full-width Done button, solid dark background)
 - Tested: Started AMRAP (1 round), skipped to completion → "WORKOUT COMPLETE!" with "AMRAP 10min", Duration 0:09, Rounds 1, Intervals 1. Tapped Done → returned to preset list. Also tested EMOM (10 rounds) → Duration 0:55, Rounds 10, Intervals 1.
 - Visual QA: pass — completion overlay clean with no background bleed-through, stats display correctly
+
+### Run 29 — 2026-04-07 21:55
+- Task: Phase 4 — Half-time alert + grammar fix
+- Result: COMPLETED — half-time indicator at 50% of each interval (>= 10s), plus "1 rounds" → "1 round" fix
+- Files changed: RoundTimer/Engine/TimerEngine.swift (halfTimeFired flag, onHalfTime callback, fires at 50%), RoundTimer/Models/SoundEvent.swift (added .halfTime), RoundTimer/Engine/AudioManager.swift (halfTime sound ID 1113), RoundTimer/Views/Presets/PresetListView.swift (wired onHalfTime, grammar fix), RoundTimer/Views/ActiveTimer/ActiveTimerView.swift (HALFWAY badge with auto-dismiss after 2s)
+- Tested: Started Tabata (20s work), timer ran through phases correctly. Grammar fix verified — AMRAP shows "1 round". Stop → confirmation → back to preset list.
+- Visual QA: pass — timer runs, phases transition, HALFWAY badge transient (2s display), grammar correct

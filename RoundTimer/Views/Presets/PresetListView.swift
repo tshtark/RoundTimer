@@ -136,6 +136,10 @@ struct PresetListView: View {
             AudioManager.shared.playCountdownIfNeeded(secondsLeft: seconds)
             HapticManager.shared.countdownTick()
         }
+        engine.onHalfTime = {
+            AudioManager.shared.play(.halfTime)
+            HapticManager.shared.countdownTick()
+        }
         engine.onComplete = {
             AudioManager.shared.play(.timerComplete)
             HapticManager.shared.timerComplete()
@@ -172,7 +176,7 @@ struct PresetRow: View {
                 }
 
                 HStack(spacing: 12) {
-                    Label("\(preset.rounds) rounds", systemImage: "repeat")
+                    Label("\(preset.rounds) \(preset.rounds == 1 ? "round" : "rounds")", systemImage: "repeat")
                     Label(preset.formattedDuration, systemImage: "clock")
                 }
                 .font(.subheadline)

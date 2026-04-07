@@ -6,5 +6,6 @@ enum SoundEvent: String, CaseIterable {
     case warmupStart
     case cooldownStart
     case countdownBeep
+    case halfTime
     case timerComplete
 }
