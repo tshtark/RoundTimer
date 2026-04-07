@@ -55,7 +55,7 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] Countdown text pulse animation in final 10 seconds
 - [x] Larger, bolder round dots with better spacing
 - [x] Better typography hierarchy on PresetListView
-- [ ] Empty state if no user presets yet (encouraging message)
+- [x] Empty state if no user presets yet (encouraging message)
 - [ ] Confirmation dialog before stopping an active timer
 - [ ] Smooth fullScreenCover transition animation
 - [ ] Accessibility: VoiceOver labels on all controls
@@ -216,3 +216,10 @@ Each automated run appends a brief entry here.
 - Result: COMPLETED — upgraded PresetRow typography
 - Files changed: RoundTimer/Views/Presets/PresetListView.swift (PresetRow: title3 rounded semibold for names, subheadline for metadata, larger play button at 36pt, better spacing)
 - Visual QA: pass — preset names are larger and bolder, metadata more readable, play button more prominent
+
+### Run 22 — 2026-04-07 20:03
+- Task: Phase 3 — Empty state if no user presets yet
+- Result: COMPLETED — encouraging "Create Your Own Timer" section at bottom when no user presets exist
+- Files changed: RoundTimer/Views/Presets/PresetListView.swift (added conditional section with timer icon, headline, and subtitle)
+- Tested: Deleted presets.json to get only built-in presets → scrolled down → "Create Your Own Timer" section visible at bottom
+- Visual QA: pass — empty state message shows correctly, disappears when user presets exist

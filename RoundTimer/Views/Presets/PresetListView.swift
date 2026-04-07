@@ -52,6 +52,24 @@ struct PresetListView: View {
                         store.delete(preset)
                     }
                 }
+
+                if !store.presets.contains(where: { !$0.isBuiltIn }) {
+                    Section {
+                        VStack(spacing: 8) {
+                            Image(systemName: "timer")
+                                .font(.largeTitle)
+                                .foregroundStyle(.secondary)
+                            Text("Create Your Own Timer")
+                                .font(.headline)
+                            Text("Tap + to build a custom interval timer for your workout.")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.center)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                    }
+                }
             }
             .navigationTitle("RoundTimer")
             .toolbar {
