@@ -71,6 +71,7 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] Grammar fix: "1 round" instead of "1 rounds" on preset list
 - [x] Quick Start — one-tap timer with work/rest/rounds pickers, no preset saved
 - [x] Workout History — tracks completed workouts with date, duration, rounds; persisted via JSON
+- [x] Weekly activity summary on home screen (workouts count, total time, day streak)
 
 ---
 
@@ -297,3 +298,10 @@ Each automated run appends a brief entry here.
 - Files changed: RoundTimer/Models/WorkoutRecord.swift (NEW), RoundTimer/Persistence/WorkoutHistoryStore.swift (NEW), RoundTimer/Views/History/HistoryView.swift (NEW), RoundTimer/Views/Presets/PresetListView.swift (added historyStore, toolbar icon, sheet, onComplete recording)
 - Tested: Opened History (empty state "No Workouts Yet") → completed AMRAP (skipped to finish) → opened History → record appeared: "AMRAP 10min", Today, 10:11 PM, 6s, 1 round. Clear button visible in toolbar.
 - Visual QA: pass — history icon in toolbar, empty state clean, workout records display correctly with date/time/duration
+
+### Run 32 — 2026-04-07 22:16
+- Task: Phase 4 — Weekly activity summary on home screen
+- Result: COMPLETED — "This Week" section at top of preset list with 3 stats
+- Files changed: RoundTimer/Views/Presets/PresetListView.swift (added weeklyRecords, weeklyTotalDuration, currentStreak computed properties, formatWeeklyDuration helper, "This Week" section in List)
+- Tested: Verified with 1 workout → showed "1 Workout, 0m, 1 Day Streak". Completed second workout → updated to "2 Workouts". Section hidden when no history records exist.
+- Visual QA: pass — summary section clean with green accent colors, orange streak, proper pluralization

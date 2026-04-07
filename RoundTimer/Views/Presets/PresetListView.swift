@@ -16,6 +16,49 @@ struct PresetListView: View {
     var body: some View {
         NavigationStack {
             List {
+                if !weeklyRecords.isEmpty {
+                    Section {
+                        HStack(spacing: 16) {
+                            VStack(spacing: 4) {
+                                Text("\(weeklyRecords.count)")
+                                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                                    .foregroundStyle(TimerPhase.work.color)
+                                Text(weeklyRecords.count == 1 ? "Workout" : "Workouts")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .frame(maxWidth: .infinity)
+
+                            Divider()
+
+                            VStack(spacing: 4) {
+                                Text(formatWeeklyDuration(weeklyTotalDuration))
+                                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                                    .foregroundStyle(TimerPhase.work.color)
+                                Text("Total Time")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .frame(maxWidth: .infinity)
+
+                            Divider()
+
+                            VStack(spacing: 4) {
+                                Text("\(currentStreak)")
+                                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                                    .foregroundStyle(currentStreak > 0 ? .orange : .secondary)
+                                Text(currentStreak == 1 ? "Day Streak" : "Day Streak")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .frame(maxWidth: .infinity)
+                        }
+                        .padding(.vertical, 8)
+                    } header: {
+                        Text("This Week")
+                    }
+                }
+
                 ForEach(sortedPresets) { preset in
                     PresetRow(preset: preset, isLastUsed: preset.lastUsedAt != nil && preset.id == sortedPresets.first?.id)
                         .contentShape(Rectangle())
@@ -161,6 +204,46 @@ struct PresetListView: View {
                 }
             }
         }
+    }
+
+    private var weeklyRecords: [WorkoutRecord] {
+        let calendar = Calendar.current
+        let startOfWeek = calendar.dateInterval(of: .weekOfYear, for: Date())?.start ?? Date()
+        return historyStore.records.filter { $0.date >= startOfWeek }
+    }
+
+    private var weeklyTotalDuration: TimeInterval {
+        weeklyRecords.reduce(0) { $0 + $1.totalDuration }
+    }
+
+    private var currentStreak: Int {
+        let calendar = Calendar.current
+        var streak = 0
+        var checkDate = calendar.startOfDay(for: Date())
+
+        while true {
+            let hasWorkout = historyStore.records.contains { record in
+                calendar.isDate(record.date, inSameDayAs: checkDate)
+            }
+            if hasWorkout {
+                streak += 1
+                guard let previousDay = calendar.date(byAdding: .day, value: -1, to: checkDate) else { break }
+                checkDate = previousDay
+            } else {
+                break
+            }
+        }
+        return streak
+    }
+
+    private func formatWeeklyDuration(_ duration: TimeInterval) -> String {
+        let total = max(0, Int(duration))
+        let hours = total / 3600
+        let minutes = (total % 3600) / 60
+        if hours > 0 {
+            return "\(hours)h \(minutes)m"
+        }
+        return "\(minutes)m"
     }
 
     private var sortedPresets: [TimerPreset] {
