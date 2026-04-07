@@ -19,7 +19,7 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] Stop button returns to preset list
 - [x] Pause freezes countdown, Resume continues from where it stopped
 - [x] Skip advances to next phase immediately
-- [ ] Timer completes all rounds and shows "COMPLETE" overlay
+- [x] Timer completes all rounds and shows "COMPLETE" overlay
 - [ ] Timer with warmup phase works correctly
 - [ ] Timer with cooldown phase works correctly
 - [ ] Swipe-to-delete works on user presets (not built-in)
@@ -87,3 +87,9 @@ Each automated run appends a brief entry here.
 - Result: PASSED — no code changes needed
 - Tested: Started Tabata (WORK R1 I1/2), skipped → REST R1 I2/2 (correct), skipped → WORK R2 I1/2 (correct round increment + interval reset)
 - Visual QA: pass — skip button works in both directions, round counter and interval label update correctly
+
+### Run 4 — 2026-04-07 18:02
+- Task: QA — Timer completes all rounds and shows "COMPLETE" overlay
+- Result: PASSED — no code changes needed
+- Tested: Started AMRAP (1 round, 1 interval), skipped to end → "COMPLETE!" overlay with green checkmark and Done button appeared. Tapped Done → returned to preset list.
+- Visual QA: pass — completion overlay renders correctly, Done button navigates back
