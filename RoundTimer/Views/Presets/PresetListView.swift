@@ -7,6 +7,7 @@ struct PresetListView: View {
     @State private var selectedPreset: TimerPreset?
     @State private var showingBuilder = false
     @State private var editingPreset: TimerPreset?
+    @State private var duplicatingPreset: TimerPreset?
 
     var body: some View {
         NavigationStack {
@@ -28,6 +29,11 @@ struct PresetListView: View {
                                 } label: {
                                     Label("Edit", systemImage: "pencil")
                                 }
+                            }
+                            Button {
+                                duplicatingPreset = preset
+                            } label: {
+                                Label("Duplicate", systemImage: "doc.on.doc")
                             }
                         }
                         .deleteDisabled(preset.isBuiltIn)
@@ -54,6 +60,9 @@ struct PresetListView: View {
             }
             .sheet(item: $editingPreset) { preset in
                 PresetBuilderView(store: store, editing: preset)
+            }
+            .sheet(item: $duplicatingPreset) { preset in
+                PresetBuilderView(store: store, duplicating: preset)
             }
             .fullScreenCover(isPresented: $showingTimer) {
                 ActiveTimerView(engine: engine) {

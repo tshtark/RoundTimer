@@ -36,7 +36,7 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] ActiveTimerView (countdown, phase colors, round dots, controls)
 - [x] PresetBuilderView — create new custom presets (name, intervals, rounds, warmup, cooldown)
 - [x] PresetBuilderView — edit existing presets
-- [ ] PresetBuilderView — duplicate built-in presets for editing
+- [x] PresetBuilderView — duplicate built-in presets for editing
 - [ ] Screen stays awake during active timer (UIApplication.shared.isIdleTimerDisabled)
 - [ ] 3-2-1 countdown beeps with deduplicated firing (once per second, not per tick)
 - [ ] Final 10 seconds visual indicator (pulse or color change on countdown text)
@@ -136,3 +136,10 @@ Each automated run appends a brief entry here.
 - Files changed: RoundTimer/Views/Presets/PresetBuilderView.swift (modified — added init(editing:), editingId, update logic), RoundTimer/Views/Presets/PresetListView.swift (modified — added context menu with Edit + editingPreset sheet)
 - Tested: Long-pressed "Quick HIIT" → context menu with "Edit" appeared → tapped Edit → builder opened with "Edit Preset" title, pre-populated name/intervals/rounds → changed rounds from 3→5 → saved → list showed updated "5 rounds, 3m 45s"
 - Visual QA: pass — edit flow works end-to-end, preset updated in-place
+
+### Run 11 — 2026-04-07 19:09
+- Task: Phase 2 — PresetBuilderView — duplicate built-in presets for editing
+- Result: COMPLETED — added Duplicate context menu + duplicating init
+- Files changed: RoundTimer/Views/Presets/PresetBuilderView.swift (added init(duplicating:) with new IDs + "Copy" suffix), RoundTimer/Views/Presets/PresetListView.swift (added Duplicate to context menu for all presets + duplicatingPreset sheet)
+- Tested: Long-pressed Tabata (built-in) → context menu showed "Duplicate" (no Edit) → tapped Duplicate → builder opened with "New Preset" title, name "Tabata Copy", intervals/rounds pre-populated → saved → "Tabata Copy" appeared in list (8 rounds, 4m 0s, no star)
+- Visual QA: pass — duplicate creates independent copy, original untouched

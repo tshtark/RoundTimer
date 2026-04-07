@@ -48,6 +48,17 @@ final class PresetBuilderViewModel {
         cooldownDuration = preset.cooldown ?? 10
     }
 
+    init(duplicating preset: TimerPreset) {
+        editingId = nil
+        name = "\(preset.name) Copy"
+        intervals = preset.intervals.map { TimerInterval(phase: $0.phase, duration: $0.duration, name: $0.name) }
+        rounds = preset.rounds
+        hasWarmup = preset.warmup != nil
+        warmupDuration = preset.warmup ?? 10
+        hasCooldown = preset.cooldown != nil
+        cooldownDuration = preset.cooldown ?? 10
+    }
+
     func addInterval(phase: TimerPhase) {
         let duration: TimeInterval = phase == .work ? 30 : 15
         intervals.append(TimerInterval(phase: phase, duration: duration))
@@ -82,14 +93,22 @@ final class PresetBuilderViewModel {
 
 struct PresetBuilderView: View {
     let store: PresetStore
-    let editing: TimerPreset?
     @Environment(\.dismiss) private var dismiss
     @State private var viewModel: PresetBuilderViewModel
 
-    init(store: PresetStore, editing: TimerPreset? = nil) {
+    init(store: PresetStore) {
         self.store = store
-        self.editing = editing
-        self._viewModel = State(initialValue: editing.map { PresetBuilderViewModel(editing: $0) } ?? PresetBuilderViewModel())
+        self._viewModel = State(initialValue: PresetBuilderViewModel())
+    }
+
+    init(store: PresetStore, editing preset: TimerPreset) {
+        self.store = store
+        self._viewModel = State(initialValue: PresetBuilderViewModel(editing: preset))
+    }
+
+    init(store: PresetStore, duplicating preset: TimerPreset) {
+        self.store = store
+        self._viewModel = State(initialValue: PresetBuilderViewModel(duplicating: preset))
     }
 
     var body: some View {
