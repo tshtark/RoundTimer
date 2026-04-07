@@ -39,8 +39,8 @@ class AudioManager {
 
     func playCountdownIfNeeded(secondsLeft: Int) {
         guard secondsLeft != lastCountdownTick else { return }
-        lastCountdownTick = secondsLeft
         guard SettingsManager.shared.countdownBeepsEnabled else { return }
+        lastCountdownTick = secondsLeft
         play(.countdownBeep)
     }
 

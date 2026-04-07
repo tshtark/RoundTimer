@@ -143,6 +143,9 @@ struct ActiveTimerView: View {
         .onAppear {
             UIApplication.shared.isIdleTimerDisabled = SettingsManager.shared.keepScreenAwake
         }
+        .onChange(of: SettingsManager.shared.keepScreenAwake) { _, newValue in
+            UIApplication.shared.isIdleTimerDisabled = newValue
+        }
         .onDisappear {
             UIApplication.shared.isIdleTimerDisabled = false
         }
