@@ -41,7 +41,9 @@ class TimerEngine {
     private var phaseStartDate: Date?
     private(set) var currentPhaseDuration: TimeInterval = 0
 
+    var isHalfTime: Bool = false
     private var halfTimeFired: Bool = false
+    private var halfTimeDismissTask: Task<Void, Never>?
 
     // MARK: - Callbacks
     var onPhaseChange: (@MainActor (TimerPhase) -> Void)?
@@ -109,6 +111,8 @@ class TimerEngine {
         intervalName = name
         phaseStartDate = Date()
         halfTimeFired = false
+        halfTimeDismissTask?.cancel()
+        isHalfTime = false
         onPhaseChange?(phase)
     }
 
@@ -191,7 +195,14 @@ class TimerEngine {
             let halfPoint = currentPhaseDuration / 2.0
             if elapsed >= halfPoint {
                 halfTimeFired = true
+                isHalfTime = true
                 onHalfTime?()
+                halfTimeDismissTask?.cancel()
+                halfTimeDismissTask = Task { [weak self] in
+                    try? await Task.sleep(for: .seconds(2))
+                    guard !Task.isCancelled else { return }
+                    self?.isHalfTime = false
+                }
             }
         }
 
