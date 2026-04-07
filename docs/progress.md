@@ -22,7 +22,7 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] Timer completes all rounds and shows "COMPLETE" overlay
 - [x] Timer with warmup phase works correctly
 - [x] Timer with cooldown phase works correctly
-- [ ] Swipe-to-delete works on user presets (not built-in)
+- [x] Swipe-to-delete works on user presets (not built-in)
 - [ ] App survives background/foreground cycle (wall-clock recalculation)
 
 ## Phase 2: PRD Feature Implementation (V1 Required)
@@ -106,3 +106,11 @@ Each automated run appends a brief entry here.
 - Result: PASSED — no code changes needed
 - Tested: Started Custom preset (has 10s cooldown), skipped through warmup + 5 rounds (11 skips) → COOLDOWN phase appeared (orange background, orange text, 10s countdown, Round 5/5). Waited for cooldown to expire → COMPLETE overlay appeared. Tapped Done → returned to preset list.
 - Visual QA: pass — cooldown phase renders correctly and transitions to completion
+
+### Run 7 — 2026-04-07 18:18
+- Task: QA — Swipe-to-delete works on user presets (not built-in)
+- Result: BUG FOUND AND FIXED — built-in presets could be visually deleted via swipe (SwiftUI .onDelete removed the row even though store.delete silently rejected it)
+- Fix: Added `.deleteDisabled(preset.isBuiltIn)` to PresetRow in ForEach
+- Files changed: RoundTimer/Views/Presets/PresetListView.swift
+- Tested: Injected user preset "My Quick Timer" → swiped left on it → Delete button appeared → tapped Delete → preset removed. Swiped on Tabata (built-in) → no Delete button appeared. Both behaviors correct.
+- Visual QA: pass — user presets deletable, built-in presets protected
