@@ -7,6 +7,16 @@ class AudioManager {
     private var players: [SoundEvent: AVAudioPlayer] = [:]
     private var lastCountdownTick: Int = 0
 
+    private let soundFiles: [SoundEvent: String] = [
+        .workStart: "/System/Library/Audio/UISounds/connect_power.caf",
+        .restStart: "/System/Library/Audio/UISounds/SIMToolkitGeneralBeep.caf",
+        .warmupStart: "/System/Library/Audio/UISounds/acknowledgment_sent.caf",
+        .cooldownStart: "/System/Library/Audio/UISounds/acknowledgment_received.caf",
+        .countdownBeep: "/System/Library/Audio/UISounds/Tock.caf",
+        .halfTime: "/System/Library/Audio/UISounds/key_press_click.caf",
+        .timerComplete: "/System/Library/Audio/UISounds/payment_success.caf"
+    ]
+
     func configure() {
         do {
             let session = AVAudioSession.sharedInstance()
@@ -15,28 +25,30 @@ class AudioManager {
         } catch {
             print("Failed to configure audio session: \(error)")
         }
+        preloadSounds()
+    }
+
+    private func preloadSounds() {
+        for (event, path) in soundFiles {
+            let url = URL(fileURLWithPath: path)
+            guard FileManager.default.fileExists(atPath: path) else { continue }
+            do {
+                let player = try AVAudioPlayer(contentsOf: url)
+                player.prepareToPlay()
+                player.volume = event == .countdownBeep || event == .halfTime ? 0.5 : 0.8
+                players[event] = player
+            } catch {
+                print("Failed to load sound \(event): \(error)")
+            }
+        }
     }
 
     func play(_ event: SoundEvent) {
         guard SettingsManager.shared.isSoundEnabled else { return }
-        let soundID: UInt32
-        switch event {
-        case .workStart:
-            soundID = 1304  // strong alert
-        case .restStart:
-            soundID = 1057  // soft tone
-        case .warmupStart:
-            soundID = 1110  // begin tone
-        case .cooldownStart:
-            soundID = 1114  // alert tone
-        case .countdownBeep:
-            soundID = 1103  // tock
-        case .halfTime:
-            soundID = 1113  // subtle double-tap
-        case .timerComplete:
-            soundID = 1025  // fanfare-ish
+        if let player = players[event] {
+            player.currentTime = 0
+            player.play()
         }
-        AudioServicesPlaySystemSound(soundID)
     }
 
     func playCountdownIfNeeded(secondsLeft: Int) {

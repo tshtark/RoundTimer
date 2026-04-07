@@ -86,6 +86,7 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] Share preset via system share sheet (text summary with intervals, rounds, duration)
 - [x] Share completed workout from finish screen (duration, rounds, intervals share text)
 - [x] QA: Comprehensive code audit of ActiveTimerView + PresetListView (45-run accumulated changes)
+- [x] Fix AudioManager to use AVAudioPlayer instead of AudioServicesPlaySystemSound (CLAUDE.md Rule #1)
 
 ---
 
@@ -435,3 +436,11 @@ Each automated run appends a brief entry here.
   3. WorkoutHistoryStore: added @MainActor annotation for Swift 6 concurrency compliance
 - Noted for future: AudioServicesPlaySystemSound bypasses AVAudioSession (pre-existing), RoundTimerApp init @MainActor (pre-existing)
 - Visual QA: pass — app builds and runs correctly after fixes
+
+### Run 47 — 2026-04-07 23:26
+- Task: Fix AudioManager — use AVAudioPlayer instead of AudioServicesPlaySystemSound
+- Result: COMPLETED — critical fix for CLAUDE.md Rule #1 (audio over music)
+- Files changed: RoundTimer/Engine/AudioManager.swift (replaced AudioServicesPlaySystemSound with AVAudioPlayer loaded from system .caf files, preload on configure(), volume levels per event type)
+- Details: AudioServicesPlaySystemSound bypasses AVAudioSession entirely, meaning timer sounds would interrupt Spotify. Now uses AVAudioPlayer which respects the .ambient + .mixWithOthers session configuration. Sounds preloaded at app launch for zero latency.
+- Tested: Started AMRAP → timer runs without crash, audio system configured correctly
+- Visual QA: pass — timer functional, no audio crashes
