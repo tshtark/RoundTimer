@@ -21,7 +21,7 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] Skip advances to next phase immediately
 - [x] Timer completes all rounds and shows "COMPLETE" overlay
 - [x] Timer with warmup phase works correctly
-- [ ] Timer with cooldown phase works correctly
+- [x] Timer with cooldown phase works correctly
 - [ ] Swipe-to-delete works on user presets (not built-in)
 - [ ] App survives background/foreground cycle (wall-clock recalculation)
 
@@ -100,3 +100,9 @@ Each automated run appends a brief entry here.
 - Files changed: RoundTimer/Persistence/PresetStore.swift
 - Tested: Started Custom preset → WARMUP phase appeared (yellow background, gold text, countdown from 10s), then auto-transitioned to WORK (green background, 30s countdown). Warmup works correctly.
 - Visual QA: pass — warmup phase renders with correct color and transitions to work phase
+
+### Run 6 — 2026-04-07 18:13
+- Task: QA — Timer with cooldown phase works correctly
+- Result: PASSED — no code changes needed
+- Tested: Started Custom preset (has 10s cooldown), skipped through warmup + 5 rounds (11 skips) → COOLDOWN phase appeared (orange background, orange text, 10s countdown, Round 5/5). Waited for cooldown to expire → COMPLETE overlay appeared. Tapped Done → returned to preset list.
+- Visual QA: pass — cooldown phase renders correctly and transitions to completion
