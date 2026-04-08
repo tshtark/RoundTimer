@@ -73,7 +73,7 @@ struct SettingsView: View {
         let encodedSubject = subject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
         let encodedBody = body.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
 
-        if let url = URL(string: "mailto:support@roundtimer.app?subject=\(encodedSubject)&body=\(encodedBody)") {
+        if let url = URL(string: "mailto:shtark285@gmail.com?subject=\(encodedSubject)&body=\(encodedBody)") {
             UIApplication.shared.open(url)
         }
     }

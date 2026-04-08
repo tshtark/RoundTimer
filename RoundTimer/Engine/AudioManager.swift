@@ -7,14 +7,14 @@ class AudioManager {
     private var players: [SoundEvent: AVAudioPlayer] = [:]
     private var lastCountdownTick: Int = 0
 
-    private let soundFiles: [SoundEvent: String] = [
-        .workStart: "/System/Library/Audio/UISounds/connect_power.caf",
-        .restStart: "/System/Library/Audio/UISounds/SIMToolkitGeneralBeep.caf",
-        .warmupStart: "/System/Library/Audio/UISounds/acknowledgment_sent.caf",
-        .cooldownStart: "/System/Library/Audio/UISounds/acknowledgment_received.caf",
-        .countdownBeep: "/System/Library/Audio/UISounds/Tock.caf",
-        .halfTime: "/System/Library/Audio/UISounds/key_press_click.caf",
-        .timerComplete: "/System/Library/Audio/UISounds/payment_success.caf"
+    private let soundFileNames: [SoundEvent: String] = [
+        .workStart: "work_start",
+        .restStart: "rest_start",
+        .warmupStart: "warmup_start",
+        .cooldownStart: "cooldown_start",
+        .countdownBeep: "countdown_beep",
+        .halfTime: "half_time",
+        .timerComplete: "timer_complete"
     ]
 
     func configure() {
@@ -29,9 +29,11 @@ class AudioManager {
     }
 
     private func preloadSounds() {
-        for (event, path) in soundFiles {
-            let url = URL(fileURLWithPath: path)
-            guard FileManager.default.fileExists(atPath: path) else { continue }
+        for (event, name) in soundFileNames {
+            guard let url = Bundle.main.url(forResource: name, withExtension: "wav") else {
+                print("Sound file not found: \(name).wav")
+                continue
+            }
             do {
                 let player = try AVAudioPlayer(contentsOf: url)
                 player.prepareToPlay()
