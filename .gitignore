@@ -25,5 +25,6 @@ Package.resolved
 # OS
 .DS_Store
 
-# Claude
-.claude/
+# Claude (keep rules/ committed for team sharing per Anthropic best practices)
+.claude/*
+!.claude/rules/
