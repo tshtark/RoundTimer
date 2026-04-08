@@ -14,6 +14,8 @@ settings:
     SWIFT_VERSION: "6.0"
     MARKETING_VERSION: "1.0.0"
     CURRENT_PROJECT_VERSION: 1
+    DEVELOPMENT_TEAM: JVZFL2WCHV
+    CODE_SIGN_STYLE: Automatic
 
 targets:
   RoundTimer:
@@ -35,7 +37,7 @@ targets:
         SUPPORTS_MACCATALYST: false
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
-        NSSupportsLiveActivities: true
+        INFOPLIST_KEY_NSSupportsLiveActivities: true
     dependencies:
       - target: RoundTimerWidgetExtension
 

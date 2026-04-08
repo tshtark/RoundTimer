@@ -8,7 +8,13 @@ class TimerActivityManager {
     private var activityId: String?
 
     func start(presetName: String, totalRounds: Int, phase: TimerPhase, intervalEndDate: Date, currentRound: Int) {
-        guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
+        let authInfo = ActivityAuthorizationInfo()
+        print("[LiveActivity] areActivitiesEnabled: \(authInfo.areActivitiesEnabled)")
+        print("[LiveActivity] frequentPushesEnabled: \(authInfo.frequentPushesEnabled)")
+        guard authInfo.areActivitiesEnabled else {
+            print("[LiveActivity] Activities NOT enabled — skipping")
+            return
+        }
 
         let attributes = TimerActivityAttributes(
             presetName: presetName,
@@ -31,8 +37,9 @@ class TimerActivityManager {
                 pushType: nil
             )
             activityId = activity.id
+            print("[LiveActivity] Started successfully, id: \(activity.id)")
         } catch {
-            print("Failed to start Live Activity: \(error)")
+            print("[LiveActivity] FAILED to start: \(error)")
         }
     }
 
