@@ -1,6 +1,8 @@
 import SwiftUI
+import StoreKit
 
 struct PresetListView: View {
+    @Environment(\.requestReview) private var requestReview
     @State private var store = PresetStore()
     @State private var engine = TimerEngine()
     @State private var showingTimer = false
@@ -278,7 +280,7 @@ struct PresetListView: View {
             AudioManager.shared.play(.halfTime)
             HapticManager.shared.countdownTick()
         }
-        engine.onComplete = { [engine, historyStore] in
+        engine.onComplete = { [engine, historyStore, requestReview] in
             AudioManager.shared.play(.timerComplete)
             HapticManager.shared.timerComplete()
             TimerActivityManager.shared.end()
@@ -289,6 +291,15 @@ struct PresetListView: View {
                 intervalsCompleted: engine.totalRounds * engine.totalIntervals
             )
             historyStore.add(record)
+
+            // Prompt for rating after 3rd, 10th, and 25th workout
+            let count = historyStore.records.count
+            if count == 3 || count == 10 || count == 25 {
+                Task { @MainActor in
+                    try? await Task.sleep(for: .seconds(1))
+                    requestReview()
+                }
+            }
         }
     }
 

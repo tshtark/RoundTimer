@@ -88,6 +88,7 @@ This file is read and updated by the automated development loop. Each run picks 
 - [x] QA: Comprehensive code audit of ActiveTimerView + PresetListView (45-run accumulated changes)
 - [x] Fix AudioManager to use AVAudioPlayer instead of AudioServicesPlaySystemSound (CLAUDE.md Rule #1)
 - [x] Fix RoundTimerApp init — move audio/haptic setup to ContentView.onAppear (Swift 6 concurrency)
+- [x] Rate & Feedback — Settings section with "Rate RoundTimer" + "Send Feedback" email + smart rating prompt after 3rd/10th/25th workout
 
 ---
 
@@ -452,3 +453,14 @@ Each automated run appends a brief entry here.
 - Files changed: RoundTimer/App/RoundTimerApp.swift (removed init()), RoundTimer/App/ContentView.swift (added .onAppear with audio/haptic setup)
 - Tested: App launches correctly, all features functional
 - Visual QA: pass — app launches, preset list renders, weekly summary displays
+
+### Run 49 — 2026-04-08 15:25
+- Task: Phase 4 — Rate & Feedback system
+- Result: COMPLETED — 3 components: Settings section, email feedback, smart rating prompt
+- Files changed: RoundTimer/Views/Settings/SettingsView.swift (added Feedback section with Rate + Send Feedback, sendFeedbackEmail() with pre-filled device info), RoundTimer/Views/Presets/PresetListView.swift (added requestReview environment, triggers at 3rd/10th/25th workout in onComplete)
+- Features:
+  1. "Rate RoundTimer" in Settings — uses SKStoreReviewController.requestReview()
+  2. "Send Feedback" in Settings — opens mailto: with pre-filled app version, build, device, iOS version
+  3. Smart rating prompt — auto-triggers requestReview() 1 second after 3rd, 10th, and 25th completed workout
+- Tested: Settings shows Feedback section with both rows (star + envelope icons). Build succeeds.
+- Visual QA: pass — Feedback section positioned between Timer and About, clean layout
