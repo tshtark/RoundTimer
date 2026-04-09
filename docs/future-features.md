@@ -36,7 +36,7 @@ Features discussed during V1 development, organized by priority. Items marked wi
 - [ ] Preset color customization — let users assign accent colors to presets
 - [ ] Workout history chart/graph — visual progress over weeks/months
 - [ ] Export workout history as CSV
-- [ ] iPad-native layout (currently runs in iPhone compatibility mode)
+- [ ] iPad-native layout polish (multi-column preset grid, larger Active Timer ring on iPad screens — the app is already a universal binary, this is design polish on top of the existing adaptive SwiftUI layout)
 
 ### Low Priority / Ideas
 - [ ] Apple Health integration — write workout data to HealthKit

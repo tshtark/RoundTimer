@@ -59,6 +59,7 @@ struct HistoryView: View {
                     Button("Done") {
                         dismiss()
                     }
+                    .accessibilityLabel("Done")
                 }
                 if !store.records.isEmpty {
                     ToolbarItem(placement: .topBarLeading) {
@@ -66,6 +67,7 @@ struct HistoryView: View {
                             showingClearConfirmation = true
                         }
                         .foregroundStyle(.red)
+                        .accessibilityLabel("Clear all history")
                     }
                 }
             }

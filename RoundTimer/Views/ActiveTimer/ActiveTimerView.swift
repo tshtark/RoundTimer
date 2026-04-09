@@ -125,15 +125,17 @@ struct ActiveTimerView: View {
                     .accessibilityLabel(engine.isPaused ? "Resume" : "Pause")
                     .sensoryFeedback(.impact(flexibility: .soft), trigger: engine.isPaused)
 
-                    // Skip
+                    // Skip — disabled on the final phase so users can't fake-complete a workout
                     Button {
                         engine.skip()
                     } label: {
                         Image(systemName: "forward.end.circle.fill")
                             .font(.system(size: 60))
-                            .foregroundStyle(.primary)
+                            .foregroundStyle(engine.isOnFinalPhase ? Color.primary.opacity(0.3) : .primary)
                     }
+                    .disabled(engine.isOnFinalPhase)
                     .accessibilityLabel("Skip to next interval")
+                    .accessibilityHint(engine.isOnFinalPhase ? "Disabled on the final interval" : "")
                     .sensoryFeedback(.impact(flexibility: .rigid), trigger: engine.currentIntervalIndex)
 
                     // Stop
@@ -179,6 +181,9 @@ struct ActiveTimerView: View {
                     Text("\(engine.presetName) — Interval \(engine.currentIntervalIndex + 1)/\(engine.totalIntervals)")
                         .font(.caption2)
                         .foregroundStyle(.tertiary)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.8)
+                        .multilineTextAlignment(.center)
                 }
                 .padding(.bottom, 8)
             }

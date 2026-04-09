@@ -218,9 +218,9 @@ Shown on lock screen and Dynamic Island during an active timer.
 - App Store privacy label: "Data Not Collected"
 
 ### Supported Devices
-- iPhone running iOS 17.0+
+- iPhone running iOS 17.0+ (portrait only)
+- iPad running iPadOS 17.0+ via SwiftUI adaptive layout (all 4 orientations) — universal binary, not iPhone compatibility mode
 - Apple Watch running watchOS 10.0+ (V1.1+)
-- No iPad-specific layout (runs in iPhone compatibility mode)
 
 ## Business Model
 

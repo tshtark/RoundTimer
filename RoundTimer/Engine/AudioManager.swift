@@ -56,6 +56,10 @@ class AudioManager {
     func playCountdownIfNeeded(secondsLeft: Int) {
         guard secondsLeft != lastCountdownTick else { return }
         guard SettingsManager.shared.countdownBeepsEnabled else { return }
+        // Bail out BEFORE marking the tick played. Otherwise, if Sound Effects
+        // were toggled off mid-countdown we'd record the tick as "handled" and
+        // then skip it permanently when sound is re-enabled at the same second.
+        guard SettingsManager.shared.isSoundEnabled else { return }
         lastCountdownTick = secondsLeft
         play(.countdownBeep)
     }

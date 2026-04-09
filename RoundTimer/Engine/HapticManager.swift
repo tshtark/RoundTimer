@@ -33,6 +33,22 @@ class HapticManager {
         light.impactOccurred()
     }
 
+    /// 3-2-1 countdown haptic: gated by BOTH the global haptic toggle and the
+    /// "Countdown Beeps (3-2-1)" toggle so users who turn off the countdown
+    /// stop feeling the tick too.
+    func countdownTickIfEnabled() {
+        guard SettingsManager.shared.isHapticsEnabled,
+              SettingsManager.shared.countdownBeepsEnabled else { return }
+        light.impactOccurred()
+    }
+
+    /// Distinct from countdownTick so the half-time alert is distinguishable by
+    /// feel from the 3-2-1 countdown.
+    func halfTimeTick() {
+        guard SettingsManager.shared.isHapticsEnabled else { return }
+        medium.impactOccurred()
+    }
+
     func timerComplete() {
         guard SettingsManager.shared.isHapticsEnabled else { return }
         notification.notificationOccurred(.success)

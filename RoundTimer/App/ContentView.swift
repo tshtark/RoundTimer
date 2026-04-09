@@ -6,6 +6,7 @@ struct ContentView: View {
             .onAppear {
                 AudioManager.shared.configure()
                 HapticManager.shared.prepare()
+                TimerActivityManager.shared.cleanupStaleActivities()
             }
     }
 }

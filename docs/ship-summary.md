@@ -90,7 +90,7 @@
 - Live Activity banner while in other apps only works on Dynamic Island devices
 - App icon has rounded corners baked in by iOS (we provide square 1024x1024)
 - Watch app target exists but is empty (deferred to V1.1)
-- iPad runs in iPhone compatibility mode (no native iPad layout)
+- Universal iPhone + iPad binary via SwiftUI adaptive layout — no iPad-specific layout polish (e.g. multi-column preset grid) yet, but the app uses the iPad's full resolution and supports all 4 orientations on iPad
 
 ## Sound Files
 

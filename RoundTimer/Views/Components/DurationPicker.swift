@@ -27,6 +27,8 @@ struct DurationPicker: View {
             .pickerStyle(.wheel)
             .frame(width: 80, height: 100)
             .clipped()
+            .accessibilityLabel("\(label), minutes")
+            .accessibilityValue("\(minutes) minutes")
 
             Picker("Seconds", selection: Binding(
                 get: { seconds },
@@ -39,6 +41,8 @@ struct DurationPicker: View {
             .pickerStyle(.wheel)
             .frame(width: 80, height: 100)
             .clipped()
+            .accessibilityLabel("\(label), seconds")
+            .accessibilityValue("\(seconds) seconds")
         }
     }
 }

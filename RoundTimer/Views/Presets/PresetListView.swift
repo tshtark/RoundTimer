@@ -3,6 +3,7 @@ import StoreKit
 
 struct PresetListView: View {
     @Environment(\.requestReview) private var requestReview
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var store = PresetStore()
     @State private var engine = TimerEngine()
     @State private var showingTimer = false
@@ -30,6 +31,8 @@ struct PresetListView: View {
                                     .foregroundStyle(.secondary)
                             }
                             .frame(maxWidth: .infinity)
+                            .accessibilityElement(children: .combine)
+                            .accessibilityLabel("\(weeklyRecords.count) \(weeklyRecords.count == 1 ? "workout" : "workouts") this week")
 
                             Divider()
 
@@ -42,6 +45,8 @@ struct PresetListView: View {
                                     .foregroundStyle(.secondary)
                             }
                             .frame(maxWidth: .infinity)
+                            .accessibilityElement(children: .combine)
+                            .accessibilityLabel("Total time this week, \(accessibleWeeklyDuration(weeklyTotalDuration))")
 
                             Divider()
 
@@ -49,11 +54,13 @@ struct PresetListView: View {
                                 Text("\(currentStreak)")
                                     .font(.system(size: 28, weight: .bold, design: .rounded))
                                     .foregroundStyle(currentStreak > 0 ? .orange : .secondary)
-                                Text(currentStreak == 1 ? "Day Streak" : "Day Streak")
+                                Text("Day Streak")
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             }
                             .frame(maxWidth: .infinity)
+                            .accessibilityElement(children: .combine)
+                            .accessibilityLabel("\(currentStreak) day streak")
                         }
                         .padding(.vertical, 8)
                     } header: {
@@ -62,40 +69,34 @@ struct PresetListView: View {
                 }
 
                 ForEach(sortedPresets) { preset in
-                    PresetRow(preset: preset, isLastUsed: preset.lastUsedAt != nil && preset.id == sortedPresets.first?.id)
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            selectedPreset = preset
-                            store.markUsed(preset)
-                            configureEngineCallbacks()
-                            engine.start(preset: preset)
-                            TimerActivityManager.shared.start(
-                                presetName: preset.name,
-                                totalRounds: preset.rounds,
-                                phase: engine.currentPhase,
-                                intervalEndDate: engine.phaseEndDate,
-                                currentRound: engine.currentRound
-                            )
-                            showingTimer = true
-                        }
-                        .contextMenu {
-                            if !preset.isBuiltIn {
-                                Button {
-                                    editingPreset = preset
-                                } label: {
-                                    Label("Edit", systemImage: "pencil")
-                                }
-                            }
+                    Button {
+                        startPreset(preset)
+                    } label: {
+                        PresetRow(preset: preset, isLastUsed: preset.lastUsedAt != nil && preset.id == sortedPresets.first?.id)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(presetAccessibilityLabel(for: preset))
+                    .accessibilityHint("Starts this workout")
+                    .accessibilityAddTraits(.isButton)
+                    .contextMenu {
+                        if !preset.isBuiltIn {
                             Button {
-                                duplicatingPreset = preset
+                                editingPreset = preset
                             } label: {
-                                Label("Duplicate", systemImage: "doc.on.doc")
-                            }
-                            ShareLink(item: shareText(for: preset)) {
-                                Label("Share", systemImage: "square.and.arrow.up")
+                                Label("Edit", systemImage: "pencil")
                             }
                         }
-                        .deleteDisabled(preset.isBuiltIn)
+                        Button {
+                            duplicatingPreset = preset
+                        } label: {
+                            Label("Duplicate", systemImage: "doc.on.doc")
+                        }
+                        ShareLink(item: shareText(for: preset)) {
+                            Label("Share", systemImage: "square.and.arrow.up")
+                        }
+                    }
+                    .deleteDisabled(preset.isBuiltIn)
                 }
                 .onDelete { indexSet in
                     let sorted = sortedPresets
@@ -149,20 +150,27 @@ struct PresetListView: View {
                 }
             }
             .navigationTitle("RoundTimer")
+            // At the largest accessibility text sizes the large title's
+            // ascender pokes into the system status bar. Force the inline
+            // (compact) title at those sizes so it never overlaps the clock.
+            .navigationBarTitleDisplayMode(dynamicTypeSize.isAccessibilitySize ? .inline : .automatic)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    HStack(spacing: 16) {
-                        Button {
-                            showingSettings = true
-                        } label: {
-                            Image(systemName: "gearshape")
-                        }
-                        Button {
-                            showingHistory = true
-                        } label: {
-                            Image(systemName: "clock.arrow.circlepath")
-                        }
+                ToolbarItemGroup(placement: .topBarLeading) {
+                    Button {
+                        showingSettings = true
+                    } label: {
+                        Image(systemName: "gearshape")
                     }
+                    .accessibilityLabel("Settings")
+                    .accessibilityIdentifier("settingsButton")
+
+                    Button {
+                        showingHistory = true
+                    } label: {
+                        Image(systemName: "clock.arrow.circlepath")
+                    }
+                    .accessibilityLabel("Workout History")
+                    .accessibilityIdentifier("historyButton")
                 }
                 ToolbarItem(placement: .primaryAction) {
                     Button {
@@ -170,6 +178,8 @@ struct PresetListView: View {
                     } label: {
                         Image(systemName: "plus")
                     }
+                    .accessibilityLabel("Add Custom Preset")
+                    .accessibilityIdentifier("addPresetButton")
                 }
             }
             .sheet(isPresented: $showingSettings) {
@@ -187,7 +197,8 @@ struct PresetListView: View {
                         totalRounds: preset.rounds,
                         phase: engine.currentPhase,
                         intervalEndDate: engine.phaseEndDate,
-                        currentRound: engine.currentRound
+                        currentRound: engine.currentRound,
+                        intervalName: engine.intervalName
                     )
                     showingTimer = true
                 }
@@ -242,13 +253,57 @@ struct PresetListView: View {
     }
 
     private func formatWeeklyDuration(_ duration: TimeInterval) -> String {
-        let total = max(0, Int(duration))
-        let hours = total / 3600
-        let minutes = (total % 3600) / 60
+        // Round to the nearest minute instead of flooring so 2m 32s shows as "3m"
+        // (the prior floor produced "2m" — undercounting effort).
+        let totalSeconds = max(0, Int(duration))
+        let roundedMinutes = Int((Double(totalSeconds) / 60.0).rounded())
+        let hours = roundedMinutes / 60
+        let minutes = roundedMinutes % 60
         if hours > 0 {
             return "\(hours)h \(minutes)m"
         }
-        return "\(minutes)m"
+        return "\(roundedMinutes)m"
+    }
+
+    private func accessibleWeeklyDuration(_ duration: TimeInterval) -> String {
+        let totalSeconds = max(0, Int(duration))
+        let hours = totalSeconds / 3600
+        let minutes = (totalSeconds % 3600) / 60
+        var parts: [String] = []
+        if hours > 0 {
+            parts.append("\(hours) \(hours == 1 ? "hour" : "hours")")
+        }
+        if minutes > 0 || hours == 0 {
+            parts.append("\(minutes) \(minutes == 1 ? "minute" : "minutes")")
+        }
+        return parts.joined(separator: " ")
+    }
+
+    private func presetAccessibilityLabel(for preset: TimerPreset) -> String {
+        var parts: [String] = [preset.name]
+        if preset.isBuiltIn { parts.append("built-in preset") }
+        if preset.lastUsedAt != nil && preset.id == sortedPresets.first?.id {
+            parts.append("recently used")
+        }
+        parts.append("\(preset.rounds) \(preset.rounds == 1 ? "round" : "rounds")")
+        parts.append(preset.formattedDuration)
+        return parts.joined(separator: ", ")
+    }
+
+    private func startPreset(_ preset: TimerPreset) {
+        selectedPreset = preset
+        store.markUsed(preset)
+        configureEngineCallbacks()
+        engine.start(preset: preset)
+        TimerActivityManager.shared.start(
+            presetName: preset.name,
+            totalRounds: preset.rounds,
+            phase: engine.currentPhase,
+            intervalEndDate: engine.phaseEndDate,
+            currentRound: engine.currentRound,
+            intervalName: engine.intervalName
+        )
+        showingTimer = true
     }
 
     private var sortedPresets: [TimerPreset] {
@@ -272,13 +327,22 @@ struct PresetListView: View {
                 isPaused: false
             )
         }
+        engine.onPauseStateChange = { [engine] isPaused in
+            TimerActivityManager.shared.update(
+                phase: engine.currentPhase,
+                currentRound: engine.currentRound,
+                intervalEndDate: engine.phaseEndDate,
+                intervalName: engine.intervalName,
+                isPaused: isPaused
+            )
+        }
         engine.onCountdownTick = { seconds in
             AudioManager.shared.playCountdownIfNeeded(secondsLeft: seconds)
-            HapticManager.shared.countdownTick()
+            HapticManager.shared.countdownTickIfEnabled()
         }
         engine.onHalfTime = {
             AudioManager.shared.play(.halfTime)
-            HapticManager.shared.countdownTick()
+            HapticManager.shared.halfTimeTick()
         }
         engine.onComplete = { [engine, historyStore, requestReview] in
             AudioManager.shared.play(.timerComplete)
@@ -329,6 +393,7 @@ struct PresetListView: View {
 }
 
 struct PresetRow: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     let preset: TimerPreset
     var isLastUsed: Bool = false
 
@@ -347,10 +412,13 @@ struct PresetRow: View {
                 HStack(spacing: 6) {
                     Text(preset.name)
                         .font(.system(.title3, design: .rounded, weight: .semibold))
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.8)
                     if preset.isBuiltIn {
                         Image(systemName: "star.fill")
                             .font(.caption)
                             .foregroundStyle(.yellow)
+                            .accessibilityHidden(true)
                     }
                     if isLastUsed {
                         Text("Recent")
@@ -364,12 +432,7 @@ struct PresetRow: View {
                     }
                 }
 
-                HStack(spacing: 12) {
-                    Label("\(preset.rounds) \(preset.rounds == 1 ? "round" : "rounds")", systemImage: "repeat")
-                    Label(preset.formattedDuration, systemImage: "clock")
-                }
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+                metadataLayout
 
                 HStack(spacing: 5) {
                     ForEach(preset.intervals) { interval in
@@ -390,8 +453,36 @@ struct PresetRow: View {
             Image(systemName: "play.circle.fill")
                 .font(.system(size: 36))
                 .foregroundStyle(TimerPhase.work.color)
+                .accessibilityHidden(true)
         }
         .padding(.vertical, 6)
+    }
+
+    /// Stack metadata vertically at accessibility text sizes so labels stay
+    /// adjacent to their numbers. The horizontal layout fragments at the
+    /// largest Dynamic Type tiers (e.g. "rounds m 0s" wraps as one phrase).
+    @ViewBuilder
+    private var metadataLayout: some View {
+        let roundsLabel = "\(preset.rounds) \(preset.rounds == 1 ? "round" : "rounds")"
+        if dynamicTypeSize.isAccessibilitySize {
+            VStack(alignment: .leading, spacing: 4) {
+                Label(roundsLabel, systemImage: "repeat")
+                Label(preset.formattedDuration, systemImage: "clock")
+            }
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+            .lineLimit(1)
+            .minimumScaleFactor(0.7)
+        } else {
+            HStack(spacing: 12) {
+                Label(roundsLabel, systemImage: "repeat")
+                Label(preset.formattedDuration, systemImage: "clock")
+            }
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+            .lineLimit(1)
+            .minimumScaleFactor(0.8)
+        }
     }
 }
 

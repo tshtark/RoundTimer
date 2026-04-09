@@ -12,8 +12,8 @@ options:
 settings:
   base:
     SWIFT_VERSION: "6.0"
-    MARKETING_VERSION: "1.0.0"
-    CURRENT_PROJECT_VERSION: 1
+    MARKETING_VERSION: "1.0.1"
+    CURRENT_PROJECT_VERSION: 2
     DEVELOPMENT_TEAM: JVZFL2WCHV
     CODE_SIGN_STYLE: Automatic
 
@@ -54,6 +54,8 @@ targets:
       path: RoundTimerWidgetExtension/Info.plist
       properties:
         CFBundleDisplayName: "RoundTimer Widget"
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     settings:

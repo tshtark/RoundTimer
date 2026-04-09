@@ -7,7 +7,7 @@ class TimerActivityManager {
 
     private var activityId: String?
 
-    func start(presetName: String, totalRounds: Int, phase: TimerPhase, intervalEndDate: Date, currentRound: Int) {
+    func start(presetName: String, totalRounds: Int, phase: TimerPhase, intervalEndDate: Date, currentRound: Int, intervalName: String? = nil) {
         let authInfo = ActivityAuthorizationInfo()
         print("[LiveActivity] areActivitiesEnabled: \(authInfo.areActivitiesEnabled)")
         print("[LiveActivity] frequentPushesEnabled: \(authInfo.frequentPushesEnabled)")
@@ -26,7 +26,7 @@ class TimerActivityManager {
             phaseColorHex: phase.colorHex,
             currentRound: currentRound,
             intervalEndDate: intervalEndDate,
-            intervalName: nil,
+            intervalName: intervalName,
             isPaused: false
         )
 
@@ -46,7 +46,10 @@ class TimerActivityManager {
     func update(phase: TimerPhase, currentRound: Int, intervalEndDate: Date, intervalName: String?, isPaused: Bool) {
         guard let activityId = activityId,
               let activity = Activity<TimerActivityAttributes>.activities.first(where: { $0.id == activityId })
-        else { return }
+        else {
+            print("[LiveActivity] update skipped: no tracked activity")
+            return
+        }
 
         let state = TimerActivityAttributes.ContentState(
             phase: phase.rawValue,
@@ -59,13 +62,17 @@ class TimerActivityManager {
 
         let content = ActivityContent(state: state, staleDate: isPaused ? nil : intervalEndDate)
         nonisolated(unsafe) let unsafeActivity = activity
-        Task { await unsafeActivity.update(content) }
+        Task {
+            await unsafeActivity.update(content)
+            print("[LiveActivity] Updated id: \(activityId) phase: \(phase.rawValue) paused: \(isPaused)")
+        }
     }
 
     func end() {
         guard let activityId = activityId,
               let activity = Activity<TimerActivityAttributes>.activities.first(where: { $0.id == activityId })
         else {
+            print("[LiveActivity] end skipped: no tracked activity")
             self.activityId = nil
             return
         }
@@ -81,7 +88,28 @@ class TimerActivityManager {
 
         let content = ActivityContent(state: finalState, staleDate: nil)
         nonisolated(unsafe) let unsafeActivity = activity
-        Task { await unsafeActivity.end(content, dismissalPolicy: .default) }
+        let endingId = activityId
+        Task {
+            await unsafeActivity.end(content, dismissalPolicy: .default)
+            print("[LiveActivity] Ended id: \(endingId)")
+        }
         self.activityId = nil
+    }
+
+    /// Ends all Live Activities that aren't tracked by the current session.
+    /// Call on app launch to clean up stale activities from a previous session (e.g., app was killed).
+    func cleanupStaleActivities() {
+        let activities = Activity<TimerActivityAttributes>.activities
+        guard !activities.isEmpty else { return }
+
+        // If we have a tracked activity that's still running, keep it
+        let trackedId = activityId
+
+        for activity in activities {
+            if activity.id == trackedId { continue }
+            print("[LiveActivity] Cleaning up stale activity: \(activity.id)")
+            nonisolated(unsafe) let unsafeActivity = activity
+            Task { await unsafeActivity.end(nil, dismissalPolicy: .immediate) }
+        }
     }
 }

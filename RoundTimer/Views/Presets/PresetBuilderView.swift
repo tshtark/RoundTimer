@@ -5,7 +5,17 @@ import SwiftUI
 @MainActor
 @Observable
 final class PresetBuilderViewModel {
-    var name: String
+    static let maxNameLength = 40
+    static let maxRounds = 99
+    static let maxIntervalDuration: TimeInterval = 99 * 60 + 59 // 99m 59s
+
+    var name: String {
+        didSet {
+            if name.count > Self.maxNameLength {
+                name = String(name.prefix(Self.maxNameLength))
+            }
+        }
+    }
     var intervals: [TimerInterval]
     var rounds: Int
     var hasWarmup: Bool
@@ -14,17 +24,21 @@ final class PresetBuilderViewModel {
     var cooldownDuration: TimeInterval
 
     private let editingId: UUID?
+    private let editingLastUsedAt: Date?
 
     var isEditing: Bool { editingId != nil }
 
     var isValid: Bool {
-        !name.trimmingCharacters(in: .whitespaces).isEmpty
+        let trimmed = name.trimmingCharacters(in: .whitespaces)
+        return !trimmed.isEmpty
             && !intervals.isEmpty
-            && intervals.allSatisfy { $0.duration > 0 }
+            && intervals.allSatisfy { $0.duration > 0 && $0.duration <= Self.maxIntervalDuration }
+            && (1...Self.maxRounds).contains(rounds)
     }
 
     init() {
         editingId = nil
+        editingLastUsedAt = nil
         name = ""
         intervals = [
             TimerInterval(phase: .work, duration: 30),
@@ -39,6 +53,7 @@ final class PresetBuilderViewModel {
 
     init(editing preset: TimerPreset) {
         editingId = preset.id
+        editingLastUsedAt = preset.lastUsedAt
         name = preset.name
         intervals = preset.intervals
         rounds = preset.rounds
@@ -50,6 +65,7 @@ final class PresetBuilderViewModel {
 
     init(duplicating preset: TimerPreset) {
         editingId = nil
+        editingLastUsedAt = nil
         name = "\(preset.name) Copy"
         intervals = preset.intervals.map { TimerInterval(phase: $0.phase, duration: $0.duration, name: $0.name) }
         rounds = preset.rounds
@@ -79,7 +95,10 @@ final class PresetBuilderViewModel {
             intervals: intervals,
             rounds: rounds,
             warmup: hasWarmup ? warmupDuration : nil,
-            cooldown: hasCooldown ? cooldownDuration : nil
+            cooldown: hasCooldown ? cooldownDuration : nil,
+            // Preserve recent-use marker when editing — losing it would
+            // unexpectedly drop the "Recent" badge after a quick edit.
+            lastUsedAt: editingLastUsedAt
         )
         if isEditing {
             store.update(preset)
@@ -125,6 +144,7 @@ struct PresetBuilderView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
+                        .accessibilityLabel("Cancel")
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
@@ -132,6 +152,7 @@ struct PresetBuilderView: View {
                         dismiss()
                     }
                     .disabled(!viewModel.isValid)
+                    .accessibilityLabel("Save preset")
                 }
             }
         }
@@ -143,6 +164,7 @@ struct PresetBuilderView: View {
         Section("Preset Name") {
             TextField("e.g. My Tabata", text: $viewModel.name)
                 .autocorrectionDisabled()
+                .accessibilityLabel("Preset Name")
         }
     }
 
@@ -194,7 +216,7 @@ struct PresetBuilderView: View {
 
     private var roundsSection: some View {
         Section("Rounds") {
-            Stepper(value: $viewModel.rounds, in: 1...99) {
+            Stepper(value: $viewModel.rounds, in: 1...PresetBuilderViewModel.maxRounds) {
                 HStack {
                     Text("Rounds")
                     Spacer()
@@ -203,6 +225,8 @@ struct PresetBuilderView: View {
                         .monospacedDigit()
                 }
             }
+            .accessibilityLabel("Rounds")
+            .accessibilityValue("\(viewModel.rounds)")
         }
     }
 
@@ -245,6 +269,8 @@ private struct IntervalEditorRow: View {
                 Text("Rest").tag(TimerPhase.rest)
             }
             .pickerStyle(.segmented)
+            .accessibilityLabel("Phase")
+            .accessibilityValue(interval.phase == .work ? "Work" : "Rest")
 
             DurationPicker(label: "Duration", duration: $interval.duration)
 
@@ -254,6 +280,7 @@ private struct IntervalEditorRow: View {
             ))
             .font(.caption)
             .foregroundStyle(.secondary)
+            .accessibilityLabel("Interval label")
         }
         .padding(.vertical, 4)
     }

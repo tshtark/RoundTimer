@@ -66,15 +66,18 @@ class TimerEngine {
         guard let preset = preset, isRunning, !isFinished else { return 0 }
         var remaining = timeRemaining
 
-        // Add remaining intervals in current round
+        // During warmup we haven't started any interval yet, so include ALL intervals
+        // of the current round. Otherwise add only the intervals AFTER the current one.
         let intervalDuration = preset.intervals.reduce(0.0) { $0 + $1.duration }
-        for i in (currentIntervalIndex + 1)..<preset.intervals.count {
+        let startFromIndex = (currentPhase == .warmup) ? 0 : (currentIntervalIndex + 1)
+        for i in startFromIndex..<preset.intervals.count {
             remaining += preset.intervals[i].duration
         }
 
-        // Add remaining full rounds
-        let remainingRounds = totalRounds - currentRound
-        remaining += Double(remainingRounds) * intervalDuration
+        // Add remaining FULL rounds. During warmup, the first round still needs to play
+        // entirely (we just added it above), so remaining rounds = totalRounds - 1.
+        let remainingRounds = (currentPhase == .warmup) ? (totalRounds - 1) : (totalRounds - currentRound)
+        remaining += Double(max(0, remainingRounds)) * intervalDuration
 
         // Add cooldown if applicable
         if currentPhase != .cooldown, let cooldown = preset.cooldown, cooldown > 0 {
@@ -82,6 +85,23 @@ class TimerEngine {
         }
 
         return remaining
+    }
+
+    /// True when calling `skip()` would cause workout completion (i.e., trigger `finish()`).
+    /// Used to disable the Skip button on the final phase so users can't fake-complete a workout.
+    var isOnFinalPhase: Bool {
+        guard let preset = preset, isRunning, !isFinished else { return false }
+        switch currentPhase {
+        case .warmup:
+            return false
+        case .work, .rest:
+            let isLastIntervalInRound = currentIntervalIndex + 1 >= preset.intervals.count
+            let isLastRound = currentRound >= totalRounds
+            let hasCooldown = (preset.cooldown ?? 0) > 0
+            return isLastIntervalInRound && isLastRound && !hasCooldown
+        case .cooldown:
+            return true
+        }
     }
 
     // MARK: - Elapsed Time
@@ -97,6 +117,7 @@ class TimerEngine {
     private var preset: TimerPreset?
     private var timer: Timer?
     private var phaseStartDate: Date?
+    private var pauseStartDate: Date?
     private(set) var currentPhaseDuration: TimeInterval = 0
 
     var isHalfTime: Bool = false
@@ -108,10 +129,17 @@ class TimerEngine {
     var onCountdownTick: (@MainActor (Int) -> Void)?
     var onHalfTime: (@MainActor () -> Void)?
     var onComplete: (@MainActor () -> Void)?
+    /// Fires whenever isPaused changes (true on pause, false on resume).
+    var onPauseStateChange: (@MainActor (Bool) -> Void)?
 
     // MARK: - Controls
 
     func start(preset: TimerPreset) {
+        // Defensive guard: a malformed preset (zero intervals) should never start a workout.
+        // Otherwise the phase machine would recurse instantly through every round and fire
+        // a fake completion (sound, history record, day-streak bump).
+        guard !preset.intervals.isEmpty else { return }
+
         self.preset = preset
         self.presetName = preset.name
         self.totalRounds = preset.rounds
@@ -122,6 +150,7 @@ class TimerEngine {
         self.isPaused = false
         self.isFinished = false
         self.workoutStartDate = Date()
+        self.pauseStartDate = nil
 
         if let warmup = preset.warmup, warmup > 0 {
             enterPhase(.warmup, duration: warmup, name: nil)
@@ -135,14 +164,24 @@ class TimerEngine {
     func pause() {
         guard isRunning, !isPaused else { return }
         isPaused = true
+        pauseStartDate = Date()
         stopTick()
+        onPauseStateChange?(true)
     }
 
     func resume() {
         guard isRunning, isPaused else { return }
         isPaused = false
-        phaseStartDate = Date().addingTimeInterval(-(currentPhaseDuration - timeRemaining))
+        // Push both the workout start and current phase start forward by the paused
+        // duration so elapsedTime and tick() math both exclude the paused window.
+        if let pauseStart = pauseStartDate {
+            let pauseDuration = Date().timeIntervalSince(pauseStart)
+            workoutStartDate = workoutStartDate?.addingTimeInterval(pauseDuration)
+            phaseStartDate = phaseStartDate?.addingTimeInterval(pauseDuration)
+        }
+        pauseStartDate = nil
         startTick()
+        onPauseStateChange?(false)
     }
 
     func stop() {
@@ -153,10 +192,16 @@ class TimerEngine {
         timeRemaining = 0
         preset = nil
         workoutStartDate = nil
+        pauseStartDate = nil
     }
 
     func skip() {
         guard isRunning else { return }
+        // Refuse to skip past the final phase. Otherwise the user could fake-complete
+        // a workout in seconds (fires celebration sound, writes a fake WorkoutRecord,
+        // bumps day streak). The Skip button is also disabled in the UI when on the
+        // final phase, but this guard is the source of truth.
+        guard !isOnFinalPhase else { return }
         advanceToNextPhase()
     }
 
